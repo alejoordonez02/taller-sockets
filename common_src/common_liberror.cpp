@@ -13,7 +13,7 @@
 #include <cstdarg>
 #include <cstring>
 
-#include "liberror.h"
+#include "common_liberror.h"
 
 LibError::LibError(int error_code, const char* fmt, ...) noexcept {
     va_list args;

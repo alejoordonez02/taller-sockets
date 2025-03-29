@@ -4,7 +4,7 @@
  *
  * De acuerdo con la GPL v2, este código se mantiene bajo la misma licencia.
  */
-#include "resolvererror.h"
+#include "common_resolvererror.h"
 
 #include <sys/types.h>
 #include <arpa/inet.h>

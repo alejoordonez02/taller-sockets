@@ -4,9 +4,9 @@
  *
  * De acuerdo con la GPL v2, este código se mantiene bajo la misma licencia.
  */
-#include "resolver.h"
-#include "resolvererror.h"
-#include "liberror.h"
+#include "common_resolver.h"
+#include "common_resolvererror.h"
+#include "common_liberror.h"
 
 #include <stdio.h>
 #include <string.h>

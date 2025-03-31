@@ -1,49 +1,60 @@
-#include "common_src/common_socket.h"
-#include "common_protocol.h"
-#include "common_binary_protocol.h"
-#include "common_text_protocol.h"
-
+#include <exception>
 #include <iostream>
-#include <iomanip>
+#include <cstdint>
 #include <string>
-#include <cstring>
-#include <vector>
+#include <memory>
 
-#define MAX_BUF 100
+#include "../common_src/common_socket.h"
+#include "../common_src/common_protocol.h"
 
 int main(int argc, char* argv[]) {
+    if (argc != 4) return -1;
 
-    if (argc != 4)
-        return -1;
+    const std::string hostname = argv[1];
+    const std::string servname = argv[2];
+    const std::string username = argv[3];
 
-    const char *hostname = argv[1];
-    const char *servname = argv[2];
-    std::string username = argv[3];
+    Socket srv(hostname.c_str(), servname.c_str());
 
-    auto protocol = Protocol::create(hostname, servname, username);
+    /*
+     * enviar el username
+     ***/
+    std::string username_msg_buf;
+    username_msg_buf = Protocol::srlz_username(username);
 
-    while (true) {
-        std::string input;
-        getline(std::cin, input);
+    srv.sendall(username_msg_buf.data(), username_msg_buf.size());
 
-        std::stringstream ss;
-        ss.str(input);
+    /*
+     * recibir el tipo de
+     * protocolo y luego
+     * instanciarlo
+     ***/
+    char prtcl_t_buf[2];
+    srv.recvall(prtcl_t_buf, sizeof(prtcl_t_buf));
 
-        std::string c;
+    std::cout << prtcl_t_buf << std::endl;
 
-        std::vector<std::string> cmd;
+    ProtocolType prtcl_t;
+    prtcl_t = Protocol::dsrlz_prtcl_t(*prtcl_t_buf);
 
-        while (getline(ss, c, ' ')) {
-            cmd.push_back(c);
-        }
+    auto prtcl = Protocol::create(prtcl_t);
 
-        if (cmd[0] == "exit")
+    /*
+     * leer los comandos por
+     * entrada estándar y
+     * ejecutarlos
+     ***/
+    std::string cmd;
+    while (getline(std::cin, cmd)) {
+        if (cmd == "exit")
             return 0;
 
+        std::string srlzd_cmd;
+        srlzd_cmd = prtcl->srlz(cmd);
 
-        protocol->send(input);
-        char buf[MAX_BUF] = {0};
-        protocol->recv(buf);
+        std::cout << srlzd_cmd << std::endl;
+
+        srv.sendall(srlzd_cmd.data(), srlzd_cmd.size());
     }
 
     return 0;

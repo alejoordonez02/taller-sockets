@@ -9,6 +9,7 @@
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_binary_protocol.h"
 #include "../common_src/common_text_protocol.h"
+#include "../common_src/common_command.h"
 
 void test_srlz_username() {
     std::string username = "abcd";
@@ -109,7 +110,8 @@ void test_srlz_prtcl_t() {
 }
 
 void test_binary_srlz_cmd_buy() {
-    std::string cmd = "buy awp";
+    Command cmd("buy awp");
+
     std::vector<uint8_t> expected = {0x02, 0x04};
 
     auto prtcl = Protocol::create(ProtocolType::BINARY);
@@ -124,10 +126,10 @@ void test_binary_srlz_cmd_buy() {
 }
 
 void test_binary_srlz_cmd_ammo() {
-    std::string cmd = "ammo ak-47 15";
+    Command cmd("ammo ak-47 15");
     std::vector<uint8_t> expected = {
         0x03,
-        0x02,
+        0x01,
         0x00, 0x0f
     };
 

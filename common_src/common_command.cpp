@@ -39,35 +39,68 @@ std::map<std::string, WeaponType> wpn_t_map = {
 };
 
 Command::Command(
+    Type t,
+    Weapon wpn) :
+    t(t),
+    wpn(wpn),
+    wpn_t(WeaponType::NONE),
+    count(0) {}
+
+Command::Command(
+    Type t,
+    WeaponType wpn_t,
+    int count) :
+    t(t),
+    wpn(Weapon::NONE),
+    wpn_t(wpn_t),
+    count(count) {}
+
+Command::Command(
     std::string cmd) {
 
     std::vector<std::string> cmd_tkns = tknz(cmd);
 
     t = cmd_t_map[cmd_tkns[0]];
     switch(t) {
-    case BUY:
+    case Type::BUY:
         wpn = wpn_map[cmd_tkns[1]];
         break;
 
-    case AMMO:
+    case Type::AMMO:
         wpn_t = wpn_t_map[cmd_tkns[1]];
         count = std::stoi(cmd_tkns[2]);
         break;
     }
 }
 
-Type Command::get_t() {
+Type Command::get_t() const {
     return t;    
 }
 
-Weapon Command::get_wpn() {
+Weapon Command::get_wpn() const {
     return wpn;
 }
 
-WeaponType Command::get_wpn_t() {
+WeaponType Command::get_wpn_t() const {
     return wpn_t;
 }
 
-int Command::get_count() {
+int Command::get_count() const {
     return count;
+}
+
+bool Command::operator==(
+    const Command& cmd) const {
+
+    if (t != cmd.t) return false;
+    
+    switch(t) {
+    case Type::BUY:
+        return (wpn == cmd.wpn);
+    case Type::AMMO:
+        return (wpn_t == cmd.wpn_t
+            && count == cmd.count);
+    default:
+        return false;
+    }
 }

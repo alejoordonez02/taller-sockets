@@ -4,12 +4,29 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <cstdint>
 #include <memory>
 #include <arpa/inet.h>
 
-std::unique_ptr<Protocol> Protocol::create(const ProtocolType &prtcl_t) {
+std::vector<std::string> Protocol::tknz(
+    const std::string &s) {
+
+    std::vector<std::string> tkns;
+
+    std::istringstream iss(s);
+
+    std::string tkn;
+    while (iss >> tkn)
+        tkns.push_back(tkn);
+
+    return tkns;
+}
+
+std::unique_ptr<Protocol> Protocol::create(
+    const ProtocolType &prtcl_t) {
+
     if (prtcl_t == ProtocolType::BINARY)
         return std::make_unique<BinaryProtocol>();
     else if (prtcl_t == ProtocolType::TEXT)

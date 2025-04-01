@@ -47,13 +47,14 @@ int main(int argc, char* argv[]) {
      * entrada estándar y
      * ejecutarlos
      ***/
-    // std::string cmd;
-    // while (getline(std::cin, cmd)) {
-    //     std::string srlzd_cmd;
-    //     // serializar el comando
+    std::string cmd;
+    while (getline(std::cin, cmd)) {
+        std::vector<uint8_t> srlzd_cmd;
+        ret = Protocol::srlz_cmd(srlzd_cmd, cmd);
+        // serializar el comando
 
-    //     srv.sendall(srlzd_cmd.data(), srlzd_cmd.size());
-    // }
+        srv.sendall(srlzd_cmd.data(), srlzd_cmd.size());
+    }
 
     return ret;
 }

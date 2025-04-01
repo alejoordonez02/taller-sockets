@@ -1,9 +1,15 @@
-// #include "common_text_protocol.h"
+#include "common_text_protocol.h"
 
-// std::string TextProtocol::srlz(std::string &cmd) {
-//     std::string srlzd_cmd;
+int TextProtocol::srlz_cmd(
+    std::vector<uint8_t> &srlzd_cmd,
+    const Command &cmd) {
 
-//     srlzd_cmd = "0";
+    return 0;
+}
 
-//     return srlzd_cmd;
-// }
+int TextProtocol::dsrlz_cmd(
+    Command &cmd,
+    std::vector<uint8_t> &srlzd_cmd) {
+
+    return 0;
+}

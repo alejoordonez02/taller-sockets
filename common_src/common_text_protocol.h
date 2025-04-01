@@ -5,7 +5,13 @@
 
 class TextProtocol : public Protocol {
 public:
-    // std::string srlz(std::string &cmd) override;
+    int srlz_cmd(
+        std::vector<uint8_t> &srlzd_cmd,
+        const Command &cmd) override;
+
+    int dsrlz_cmd(
+        Command &cmd,
+        std::vector<uint8_t> &srlzd_cmd) override;
 };
 
 #endif

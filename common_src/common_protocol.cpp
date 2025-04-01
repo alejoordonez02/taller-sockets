@@ -10,20 +10,6 @@
 #include <memory>
 #include <arpa/inet.h>
 
-std::vector<std::string> Protocol::tknz(
-    const std::string &s) {
-
-    std::vector<std::string> tkns;
-
-    std::istringstream iss(s);
-
-    std::string tkn;
-    while (iss >> tkn)
-        tkns.push_back(tkn);
-
-    return tkns;
-}
-
 std::unique_ptr<Protocol> Protocol::create(
     const ProtocolType &prtcl_t) {
 
@@ -70,7 +56,7 @@ int Protocol::srlz_prtcl_t(
 
 int Protocol::dsrlz_prtcl_t(
     ProtocolType *prtcl_t,
-    const char *srlzd_prtcl_t) {
+    std::vector<uint8_t> srlzd_prtcl_t) {
 
     if (srlzd_prtcl_t[0] != 0x06)
         return -1;

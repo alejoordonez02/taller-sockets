@@ -38,7 +38,7 @@ public:
         const char *srlzd_username);
     static int dsrlz_prtcl_t(
         ProtocolType *prtcl_t,
-        const char *srlzd_prtcl_t);
+        std::vector<uint8_t> srlzd_prtcl_t);
     virtual ~Protocol() = default;
 };
 

@@ -34,13 +34,13 @@ int main(int argc, char* argv[]) {
      * instanciarlo y
      * delegarle el socket
      ***/
-    char srlzd_prtcl_t[2];
-    srv.recvall(srlzd_prtcl_t, 2); // 2 bytes 0x06 0x07/0x08
+    std::vector<uint8_t> srlzd_prtcl_t;
+    srv.recvall(srlzd_prtcl_t.data(), 2); // 2 bytes 0x06 0x07/0x08
 
     ProtocolType prtcl_t;
     ret = Protocol::dsrlz_prtcl_t(&prtcl_t, srlzd_prtcl_t);
 
-    // auto prtcl = Protocol::create(prtcl_t);
+    auto prtcl = Protocol::create(prtcl_t);
 
     /*
      * leer los comandos por
@@ -50,10 +50,11 @@ int main(int argc, char* argv[]) {
     std::string cmd;
     while (getline(std::cin, cmd)) {
         std::vector<uint8_t> srlzd_cmd;
-        ret = Protocol::srlz_cmd(srlzd_cmd, cmd);
-        // serializar el comando
+        ret = prtcl->srlz_cmd(srlzd_cmd, cmd);
 
         srv.sendall(srlzd_cmd.data(), srlzd_cmd.size());
+
+        // srv.recv -> std::out / Printer
     }
 
     return ret;

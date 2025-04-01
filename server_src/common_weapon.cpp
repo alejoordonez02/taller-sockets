@@ -1,1 +1,1 @@
-#include "weapon.h"
+#include "common_weapon.h"

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cassert>
 #include <string>
 #include <vector>
@@ -6,6 +7,8 @@
 #include <memory>
 
 #include "../common_src/common_protocol.h"
+#include "../common_src/common_binary_protocol.h"
+#include "../common_src/common_text_protocol.h"
 
 void test_srlz_username() {
     std::string username = "abcd";
@@ -105,12 +108,56 @@ void test_srlz_prtcl_t() {
     std::cout << "passed test_srlz_prtcl_t()!\n";
 }
 
+void test_binary_srlz_cmd_buy() {
+    std::string cmd = "buy awp";
+    std::vector<uint8_t> expected = {0x02, 0x04};
+
+    auto prtcl = Protocol::create(ProtocolType::BINARY);
+
+    std::vector<uint8_t> srlzd_cmd;
+    int ret = prtcl->srlz_cmd(srlzd_cmd, cmd);
+
+    assert(ret == 0);
+    assert(srlzd_cmd == expected);
+
+    std::cout << "passed test_binary_srlz_cmd_buy()!\n";
+}
+
+void test_binary_srlz_cmd_ammo() {
+    std::string cmd = "ammo ak-47 15";
+    std::vector<uint8_t> expected = {
+        0x03,
+        0x02,
+        0x00, 0x0f
+    };
+
+    auto prtcl = Protocol::create(ProtocolType::BINARY);
+
+    std::vector<uint8_t> srlzd_cmd;
+    int ret = prtcl->srlz_cmd(srlzd_cmd, cmd);
+
+    assert(ret == 0);
+    assert(srlzd_cmd == expected);
+
+    std::cout << "passed test_binary_srlz_cmd_ammo()!\n";
+}
+
+void test_binary_dsrlz_cmd_buy() {
+    // 
+}
+
+void test_binary_dsrlz_cmd_ammo() {
+    // 
+}
+
 int main() {
     test_srlz_username();
     test_dsrlz_prtcl_t();
     test_create();
     test_dsrlz_username();
     test_srlz_prtcl_t();
+    test_binary_srlz_cmd_buy();
+    test_binary_srlz_cmd_ammo();
 
     return 0;
 }

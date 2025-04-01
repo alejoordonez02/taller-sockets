@@ -109,7 +109,6 @@ endif
 fuentes_client ?= $(wildcard ./client_src/*.$(extension)) $(wildcard ./client_*.$(extension))
 fuentes_server ?= $(wildcard ./server_src/*.$(extension)) $(wildcard ./server_*.$(extension))
 fuentes_common ?= $(wildcard ./common_src/*.$(extension)) $(wildcard ./common_*.$(extension))
-fuentes_tests ?= $(wildcard ./test_src/test_*.$(extension))
 directorios = $(shell find . -type d -regex '.*\w+')
 
 occ := $(CC)
@@ -132,14 +131,13 @@ COMPILERFLAGS-TSAN = $(COMPILERFLAGS) -fsanitize=thread
 # REGLAS
 #########
 
-.PHONY: all clean tests run_tests
+.PHONY: all clean
 
 all: client server
 
 o_common_files = $(patsubst %.$(extension),%.o,$(fuentes_common))
 o_client_files = $(patsubst %.$(extension),%.o,$(fuentes_client))
 o_server_files = $(patsubst %.$(extension),%.o,$(fuentes_server))
-o_test_files = $(patsubst %.$(extension),%.o,$(fuentes_tests))
 
 client: $(o_common_files) $(o_client_files)
 	@if [ -z "$(o_client_files)" ]; \
@@ -161,24 +159,11 @@ server: $(o_common_files) $(o_server_files)
 	$(LD) $(o_common_files) $(o_server_files) -o server $(LDFLAGS)
 	echo '~~~::~~~@@/,' # visual marker to separate the output of each compilation (may or may not help)
 
-tests: $(o_common_files) $(o_test_files)
-	@if [ -z "$(o_test_files)" ]; \
-	then \
-		echo "No hay archivos de prueba en el directorio test_src. Recuerde que los archivos deben respetar la forma 'test_*.$(extension)'."; \
-		if [ -n "$(directorios)" ]; then echo "Directorios encontrados: $(directorios)"; fi; \
-		false; \
-	fi >&2
-	$(LD) $(o_common_files) $(o_test_files) -o tests $(LDFLAGS)
-	echo '~~~::~~~@@/,' # visual marker to separate the output of each compilation
-
 %.o: %.$(extension)
 	$(COMPILER) $(COMPILERFLAGS) -o $@ -c $<
 	echo
 	echo '~~~::~~~@@/,' # visual marker to separate the output of each compilation (may or may not help)
 
-run_tests: tests
-	@echo "Running unit tests:"
-	./tests
-
 clean:
-	$(RM) -f $(o_common_files) $(o_client_files) $(o_server_files) $(o_test_files) client server tests
+	$(RM) -f $(o_common_files) $(o_client_files) $(o_server_files) client server
+

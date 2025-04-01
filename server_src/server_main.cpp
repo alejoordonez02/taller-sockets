@@ -15,6 +15,8 @@ int main(int argc, char* argv[]) {
     const std::string servname = argv[1];
     const std::string prtcl_t = argv[2];
 
+    int ret = 0;
+
     Socket skt(servname.c_str());
     Socket clt = skt.accept();
 
@@ -25,7 +27,7 @@ int main(int argc, char* argv[]) {
     clt.recvsome(srlzd_username, sizeof(srlzd_username));
 
     std::string username;
-    username = Protocol::dsrlz_username(srlzd_username);
+    ret = Protocol::dsrlz_username(username, srlzd_username);
 
     std::cout << username << " has arrived!\n";
 
@@ -33,16 +35,16 @@ int main(int argc, char* argv[]) {
      * enviar el tipo de
      * protocolo
      ***/
-    std::string srlzd_prtcl_t;
-    srlzd_prtcl_t = Protocol::srlz_prtcl_t(prtcl_t);
+    std::vector<uint8_t> srlzd_prtcl_t;
+    ret = Protocol::srlz_prtcl_t(srlzd_prtcl_t, prtcl_t);
 
-    clt.sendall(&srlzd_prtcl_t, sizeof(srlzd_prtcl_t));
+    clt.sendall(srlzd_prtcl_t.data(), srlzd_prtcl_t.size());
 
-    while (true) {
-        std::string cmd_buf;
-        clt.recvsome(cmd_buf.data(), BUF_SIZE);
-        std::cout << cmd_buf << std::endl;
-    }
+    // while (true) {
+    //     std::string cmd_buf;
+    //     clt.recvsome(cmd_buf.data(), BUF_SIZE);
+    //     std::cout << cmd_buf << std::endl;
+    // }
 
-    return 0;
+    return ret;
 }

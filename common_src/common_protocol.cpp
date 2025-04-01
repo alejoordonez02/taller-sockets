@@ -2,27 +2,14 @@
 #include "common_binary_protocol.h"
 #include "common_text_protocol.h"
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdint>
-#include <arpa/inet.h>
 #include <memory>
-#include <sstream>
+#include <arpa/inet.h>
 
-std::vector<std::string> Protocol::tknz(const std::string &cmd) {
-    std::vector<std::string> tknzd_cmd;
-
-    std::istringstream cmd_iss(cmd);
-
-    std::string tkn;
-    while (cmd_iss >> tkn)
-        tknzd_cmd.push_back(tkn);
-
-    return tknzd_cmd;
-}
-
-
-std::unique_ptr<Protocol> Protocol::create(ProtocolType &prtcl_t) {
+std::unique_ptr<Protocol> Protocol::create(const ProtocolType &prtcl_t) {
     if (prtcl_t == ProtocolType::BINARY)
         return std::make_unique<BinaryProtocol>();
     else if (prtcl_t == ProtocolType::TEXT)
@@ -31,48 +18,64 @@ std::unique_ptr<Protocol> Protocol::create(ProtocolType &prtcl_t) {
     return nullptr;
 }
 
-std::string Protocol::srlz_username(const std::string &username) {
-    std::string srlzd_username;
+int Protocol::srlz_username(
+    std::vector<uint8_t> &srlzd_username,
+    const std::string &username) {
 
-    uint16_t len = username.size();
+    srlzd_username.clear();
+
+    uint16_t len = static_cast<uint16_t>(username.size());
     len = htons(len);
+    uint8_t *len_ptr = reinterpret_cast<uint8_t *>(&len);
 
     srlzd_username.push_back(0x01);
-    srlzd_username.append(reinterpret_cast<char*>(&len), sizeof(len));
-    srlzd_username.append(username);
+    srlzd_username.insert(
+        srlzd_username.end(), len_ptr, len_ptr + sizeof(uint16_t));
+    srlzd_username.insert(
+        srlzd_username.end(), username.begin(), username.end());
 
-    return srlzd_username;
+    return 0;
 }
 
-ProtocolType Protocol::dsrlz_prtcl_t(char &srlzd_prtcl_t) {
-    ProtocolType prtcl_t;
-
-    if (srlzd_prtcl_t == 0x07)
-        prtcl_t = ProtocolType::BINARY;
-    else if (srlzd_prtcl_t == 0x08)
-        prtcl_t = ProtocolType::TEXT;
-
-    return prtcl_t;
-}
-
-std::string Protocol::dsrlz_username(char *srlzd_username) {
-    uint16_t len = (static_cast<unsigned char>(srlzd_username[1]) << 8)
-        | static_cast<unsigned char>(srlzd_username[2]);
-
-    std::string username(srlzd_username + 3, len);
-
-    return username;
-}
-
-std::string Protocol::srlz_prtcl_t(const std::string &prtcl_t) {
-    std::string srlzd_prtcl_t;
-
-    srlzd_prtcl_t.push_back(0x06);
+int Protocol::srlz_prtcl_t(
+    std::vector<uint8_t> &srlzd_prtcl_t,
+    const std::string &prtcl_t) {
 
     if (prtcl_t == "binary")
-        srlzd_prtcl_t.push_back(0x07);
+        srlzd_prtcl_t = {0x06, 0x07};
     else if (prtcl_t == "text")
-        srlzd_prtcl_t.push_back(0x08);
+        srlzd_prtcl_t = {0x06, 0x08};
+    else
+        return -1;
 
-    return srlzd_prtcl_t;
+    return 0;
+}
+
+int Protocol::dsrlz_prtcl_t(
+    ProtocolType *prtcl_t,
+    const char *srlzd_prtcl_t) {
+
+    if (srlzd_prtcl_t[0] != 0x06)
+        return -1;
+
+    if (srlzd_prtcl_t[1] == 0x07)
+        *prtcl_t = ProtocolType::BINARY;
+    else if (srlzd_prtcl_t[1] == 0x08)
+        *prtcl_t = ProtocolType::TEXT;
+    else
+        return -1;
+
+    return 0;
+}
+
+int Protocol::dsrlz_username(
+    std::string &username,
+    const char *srlzd_username) {
+
+    const uint16_t *srlzd_len = reinterpret_cast<const uint16_t *>(srlzd_username + 1);
+    uint16_t len = ntohs(*srlzd_len);
+
+    username = std::string (srlzd_username + 3, len);
+
+    return 0;
 }

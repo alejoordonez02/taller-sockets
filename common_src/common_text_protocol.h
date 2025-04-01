@@ -5,7 +5,7 @@
 
 class TextProtocol : public Protocol {
 public:
-    std::string srlz(std::string &cmd) override;
+    // std::string srlz(std::string &cmd) override;
 };
 
 #endif

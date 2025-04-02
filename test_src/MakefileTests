@@ -1,0 +1,56 @@
+CXX = g++
+CXXFLAGS = -Wall -Wextra -std=c++14 -g
+INCLUDES = -I../common_src
+
+COMMON_SRC = ../common_src/common_protocol.cpp \
+	../common_src/common_binary_protocol.cpp \
+	../common_src/common_text_protocol.cpp \
+	../common_src/common_command.cpp
+
+TESTS = test_command test_protocol test_binary_protocol
+
+all: $(TESTS)
+
+clean:
+	rm -f $(TESTS) *.o
+
+test_command: test_command.cpp $(COMMON_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMON_SRC)
+
+test_protocol: test_protocol.cpp $(COMMON_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMON_SRC)
+
+test_binary_protocol: test_binary_protocol.cpp $(COMMON_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMON_SRC)
+
+run_command: test_command
+	./test_command
+
+run_protocol: test_protocol
+	./test_protocol
+
+run_binary: test_binary_protocol
+	./test_binary_protocol
+
+run_all: $(TESTS)
+	@echo "Running all tests..."
+	@for test in $(TESTS); do \
+		echo "\n--- Running $$test ---"; \
+		./$$test; \
+	done
+
+test_command.o: test_command.cpp ../common_src/common_command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+
+test_protocol.o: test_protocol.cpp ../common_src/common_protocol.h \
+	../common_src/common_binary_protocol.h \
+	../common_src/common_text_protocol.h \
+	../common_src/common_command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+
+test_binary_protocol.o: test_binary_protocol.cpp ../common_src/common_protocol.h \
+	../common_src/common_binary_protocol.h \
+	../common_src/common_command.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+
+.PHONY: all clean run_command run_protocol run_binary run_all

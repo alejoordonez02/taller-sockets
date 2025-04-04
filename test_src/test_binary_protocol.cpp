@@ -50,7 +50,7 @@ void test_binary_dsrlz_cmd_buy() {
         0x02,   // buy
         0x04    // awp
     };
-    Command expected(Type::BUY, Weapon::AWP);
+    Command expected(Type::BUY, WeaponName::AWP);
 
     auto prtcl = Protocol::create(ProtocolType::BINARY);
 

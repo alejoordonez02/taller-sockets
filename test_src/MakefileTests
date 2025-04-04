@@ -24,11 +24,11 @@ clean:
 test_command: test_command.cpp $(COMMAND_SRC)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMAND_SRC)
 
-test_protocol: test_protocol.cpp $(PROTOCOL_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC)
+test_protocol: test_protocol.cpp $(PROTOCOL_SRC) $(COMMAND_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC) $(COMMAND_SRC) 
 
-test_binary_protocol: test_binary_protocol.cpp $(PROTOCOL_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC)
+test_binary_protocol: test_binary_protocol.cpp $(PROTOCOL_SRC) $(COMMAND_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC) $(COMMAND_SRC)
 
 test_player: test_player.cpp $(MODEL_SRC)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(MODEL_SRC)

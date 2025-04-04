@@ -19,7 +19,7 @@ private:
 public:
     Player(
         const std::string &username);
-    const std::string get_username();
+    const std::string &get_username() const;
     int get_money();
     bool get_knife();
     std::optional<Weapon> get_primary();

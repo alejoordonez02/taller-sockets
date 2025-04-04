@@ -12,7 +12,7 @@ Player::Player(
     primary(std::nullopt),
     secondary(Glock()) {}
 
-const std::string Player::get_username() {
+const std::string &Player::get_username() const {
     return username;
 }
 

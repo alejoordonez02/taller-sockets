@@ -10,6 +10,12 @@
 #include <memory>
 #include <arpa/inet.h>
 
+#define USERNAME_MSG 0x01
+#define PROTOCOL_TYPE_MSG 0x06
+
+#define PROTOCOL_TYPE_BINARY 0x07
+#define PROTOCOL_TYPE_TEXT 0x08
+
 std::unique_ptr<Protocol> Protocol::create(
     const ProtocolType &prtcl_t) {
 
@@ -31,7 +37,7 @@ int Protocol::srlz_username(
     len = htons(len);
     uint8_t *len_ptr = reinterpret_cast<uint8_t *>(&len);
 
-    srlzd_username.push_back(0x01);
+    srlzd_username.push_back(USERNAME_MSG);
     srlzd_username.insert(
         srlzd_username.end(), len_ptr, len_ptr + sizeof(uint16_t));
     srlzd_username.insert(
@@ -44,10 +50,14 @@ int Protocol::srlz_prtcl_t(
     std::vector<uint8_t> &srlzd_prtcl_t,
     const std::string &prtcl_t) {
 
+    srlzd_prtcl_t.clear();
+
+    srlzd_prtcl_t.push_back(PROTOCOL_TYPE_MSG);
+
     if (prtcl_t == "binary")
-        srlzd_prtcl_t = {0x06, 0x07};
+        srlzd_prtcl_t.push_back(PROTOCOL_TYPE_BINARY);
     else if (prtcl_t == "text")
-        srlzd_prtcl_t = {0x06, 0x08};
+        srlzd_prtcl_t.push_back(PROTOCOL_TYPE_TEXT);
     else
         return -1;
 
@@ -56,14 +66,14 @@ int Protocol::srlz_prtcl_t(
 
 int Protocol::dsrlz_prtcl_t(
     ProtocolType *prtcl_t,
-    std::vector<uint8_t> srlzd_prtcl_t) {
+    const char *srlzd_prtcl_t) {
 
-    if (srlzd_prtcl_t[0] != 0x06)
+    if (srlzd_prtcl_t[0] != PROTOCOL_TYPE_MSG)
         return -1;
 
-    if (srlzd_prtcl_t[1] == 0x07)
+    if (srlzd_prtcl_t[1] == PROTOCOL_TYPE_BINARY)
         *prtcl_t = ProtocolType::BINARY;
-    else if (srlzd_prtcl_t[1] == 0x08)
+    else if (srlzd_prtcl_t[1] == PROTOCOL_TYPE_TEXT)
         *prtcl_t = ProtocolType::TEXT;
     else
         return -1;
@@ -74,6 +84,9 @@ int Protocol::dsrlz_prtcl_t(
 int Protocol::dsrlz_username(
     std::string &username,
     const char *srlzd_username) {
+
+    if (srlzd_username[0] != USERNAME_MSG)
+        return -1;
 
     const uint16_t *srlzd_len = reinterpret_cast<const uint16_t *>(srlzd_username + 1);
     uint16_t len = ntohs(*srlzd_len);

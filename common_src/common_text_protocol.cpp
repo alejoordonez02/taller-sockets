@@ -9,7 +9,7 @@ int TextProtocol::srlz_cmd(
 
 int TextProtocol::dsrlz_cmd(
     Command &cmd,
-    std::vector<uint8_t> &srlzd_cmd) {
+    const char*srlzd_cmd) {
 
     return 0;
 }

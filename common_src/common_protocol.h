@@ -24,7 +24,7 @@ public:
 
     virtual int dsrlz_cmd(
         Command &cmd,
-        std::vector<uint8_t> &srlzd_cmd) = 0;
+        const char *srlzd_cmd) = 0;
 
     static int srlz_username(
         std::vector<uint8_t> &srlzd_username,
@@ -38,7 +38,7 @@ public:
         const char *srlzd_username);
     static int dsrlz_prtcl_t(
         ProtocolType *prtcl_t,
-        std::vector<uint8_t> srlzd_prtcl_t);
+        const char *srlzd_prtcl_t);
     virtual ~Protocol() = default;
 };
 

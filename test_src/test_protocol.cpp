@@ -85,12 +85,12 @@ void test_dsrlz_prtcl_t() {
     ProtocolType expected1 = ProtocolType::BINARY;
     ProtocolType expected2 = ProtocolType::TEXT;
 
-    char msg1[2] = {
+    char msg1[] = {
         0x06,
         0x07
     };
 
-    char msg2[2] = {
+    char msg2[] = {
         0x06,
         0x08
     };
@@ -107,4 +107,14 @@ void test_dsrlz_prtcl_t() {
     assert(prtcl_t2 == expected2);
 
     std::cout << "passed test_dsrlz_prtcl_t()!\n";
+}
+
+int main() {
+    test_create();
+    test_srlz_username();
+    test_srlz_prtcl_t();
+    test_dsrlz_username();
+    test_dsrlz_prtcl_t();
+
+    return 0;
 }

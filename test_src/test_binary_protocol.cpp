@@ -46,7 +46,7 @@ void test_binary_srlz_cmd_ammo() {
 }
 
 void test_binary_dsrlz_cmd_buy() {
-    std::vector<uint8_t> srlzd_cmd ={
+    char srlzd_cmd[] ={
         0x02,   // buy
         0x04    // awp
     };
@@ -66,7 +66,7 @@ void test_binary_dsrlz_cmd_buy() {
 }
 
 void test_binary_dsrlz_cmd_ammo() {
-    std::vector<uint8_t> srlzd_cmd = {
+    char srlzd_cmd[] = {
         0x03,       // ammo
         0x01,       // ak-47
         0x00, 0x0f  // 15
@@ -87,11 +87,6 @@ void test_binary_dsrlz_cmd_ammo() {
 }
 
 int main() {
-    test_srlz_username();
-    test_dsrlz_prtcl_t();
-    test_create();
-    test_dsrlz_username();
-    test_srlz_prtcl_t();
     test_binary_srlz_cmd_buy();
     test_binary_srlz_cmd_ammo();
     test_binary_dsrlz_cmd_buy();

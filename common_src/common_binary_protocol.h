@@ -14,7 +14,7 @@ public:
 
     int dsrlz_cmd(
         Command &cmd,
-        std::vector<uint8_t> &srlzd_cmd) override;
+        const char*srlzd_cmd) override;
 };
 
 #endif

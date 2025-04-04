@@ -7,7 +7,7 @@
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
 
-#define BUF_SZ 512
+#define BUF_SIZE 512
 
 int main(int argc, char* argv[]) {
     if (argc != 4) return -1;
@@ -34,8 +34,8 @@ int main(int argc, char* argv[]) {
      * instanciarlo y
      * delegarle el socket
      ***/
-    std::vector<uint8_t> srlzd_prtcl_t;
-    srv.recvall(srlzd_prtcl_t.data(), 2); // 2 bytes 0x06 0x07/0x08
+    char srlzd_prtcl_t[BUF_SIZE];
+    srv.recvall(srlzd_prtcl_t, 2); // 2 bytes 0x06 0x07/0x08
 
     ProtocolType prtcl_t;
     ret = Protocol::dsrlz_prtcl_t(&prtcl_t, srlzd_prtcl_t);

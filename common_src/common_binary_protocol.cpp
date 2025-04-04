@@ -81,12 +81,12 @@ int BinaryProtocol::srlz_cmd(
 
 int BinaryProtocol::dsrlz_cmd(
     Command &cmd,
-    std::vector<uint8_t> &srlzd_cmd) {
+    const char *srlzd_cmd) {
 
     Type cmd_t = srl_cmd_t[srlzd_cmd[0]];
     Weapon wpn;
     WeaponType wpn_t;
-    uint16_t *srlzd_count;
+    const uint16_t *srlzd_count;
     int count;
 
     switch(cmd_t) {
@@ -97,7 +97,7 @@ int BinaryProtocol::dsrlz_cmd(
 
     case Type::AMMO:
         wpn_t = srl_wpn_t[srlzd_cmd[1]];
-        srlzd_count = reinterpret_cast<uint16_t*>(&srlzd_cmd[2]);
+        srlzd_count = reinterpret_cast<const uint16_t*>(&srlzd_cmd[2]);
         count = (int) ntohs(*srlzd_count);
         cmd = Command(cmd_t, wpn_t, count);
         break;

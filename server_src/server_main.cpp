@@ -8,7 +8,10 @@
 #include "../common_src/common_command.h"
 #include "common_command_processor.h"
 
-#define BUF_SIZE 32
+#define PROTOCOL_TYPE_BINARY "binary"
+#define PROTOCOL_TYPE_TEXT "text"
+
+#define BUF_SIZE 512
 
 int main(int argc, char* argv[]) {
     if (argc != 3)
@@ -47,7 +50,12 @@ int main(int argc, char* argv[]) {
      * protocolo
      ***/
     ProtocolType prtcl_t;
-    ret = Protocol::dsrlz_prtcl_t(&prtcl_t, srlzd_prtcl_t);
+    if (prtcl_t_s == PROTOCOL_TYPE_BINARY)
+        prtcl_t = ProtocolType::BINARY;
+    else if (prtcl_t_s == PROTOCOL_TYPE_TEXT)
+        prtcl_t = ProtocolType::TEXT;
+    else
+        return -1;
 
     auto prtcl = Protocol::create(prtcl_t);
 
@@ -56,9 +64,9 @@ int main(int argc, char* argv[]) {
      * y actualizar el modelo
      ***/
     while (true) {
-        std::vector<uint8_t> cmd_buf;
+        char cmd_buf[BUF_SIZE];
 
-        clt.recvsome(cmd_buf.data(), BUF_SIZE);
+        clt.recvsome(cmd_buf, sizeof(cmd_buf));
         if (clt.is_stream_recv_closed())
             return ret;
 

@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++14 -g
+CXXFLAGS = -Wall -Wextra -std=c++17 -g
 INCLUDES = -I../common_src
 
 COMMON_SRC = ../common_src/common_protocol.cpp \
@@ -7,7 +7,10 @@ COMMON_SRC = ../common_src/common_protocol.cpp \
 	../common_src/common_text_protocol.cpp \
 	../common_src/common_command.cpp
 
-TESTS = test_command test_protocol test_binary_protocol
+MODEL_SRC = ../server_src/server_player.cpp \
+	../server_src/server_weapon.cpp
+
+TESTS = test_command test_protocol test_binary_protocol test_player test_weapon
 
 all: $(TESTS)
 
@@ -23,6 +26,12 @@ test_protocol: test_protocol.cpp $(COMMON_SRC)
 test_binary_protocol: test_binary_protocol.cpp $(COMMON_SRC)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMON_SRC)
 
+test_player: test_player.cpp $(MODEL_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(MODEL_SRC)
+
+test_weapon: test_weapon.cpp $(MODEL_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(MODEL_SRC)
+
 run_command: test_command
 	./test_command
 
@@ -31,6 +40,12 @@ run_protocol: test_protocol
 
 run_binary: test_binary_protocol
 	./test_binary_protocol
+
+run_player: test_player
+	./test_player
+
+run_weapon: test_weapon
+	./test_weapon
 
 run_all: $(TESTS)
 	@echo "Running all tests..."
@@ -53,4 +68,8 @@ test_binary_protocol.o: test_binary_protocol.cpp ../common_src/common_protocol.h
 	../common_src/common_command.h
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
 
-.PHONY: all clean run_command run_protocol run_binary run_all
+test_player.o: test_player.cpp ../server_src/server_player.h \
+	../server_src/server_weapon.h
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
+
+.PHONY: all clean run_command run_protocol run_binary run_player run_weapon run_all

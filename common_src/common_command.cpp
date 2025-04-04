@@ -24,11 +24,11 @@ std::map<std::string, Type> cmd_t_map = {
     {"ammo", Type::AMMO},           //{prtcl_t??, Type::BUY},
 };                                  //{username??, Type::BUY},
                                     /***/
-std::map<std::string, Weapon> wpn_map = {
-    {"glock", Weapon::GLOCK},
-    {"ak-47", Weapon::AK47},
-    {"m3", Weapon::M3},
-    {"awp", Weapon::AWP}
+std::map<std::string, WeaponName> wpn_map = {
+    {"glock", WeaponName::GLOCK},
+    {"ak-47", WeaponName::AK47},
+    {"m3", WeaponName::M3},
+    {"awp", WeaponName::AWP}
 };
 
 std::map<std::string, WeaponType> wpn_t_map = {
@@ -40,7 +40,7 @@ std::map<std::string, WeaponType> wpn_t_map = {
 
 Command::Command(
     Type t,
-    Weapon wpn) :
+    WeaponName wpn) :
     t(t),
     wpn(wpn),
     wpn_t(WeaponType::NONE),
@@ -51,7 +51,7 @@ Command::Command(
     WeaponType wpn_t,
     int count) :
     t(t),
-    wpn(Weapon::NONE),
+    wpn(WeaponName::NONE),
     wpn_t(wpn_t),
     count(count) {}
 
@@ -70,14 +70,31 @@ Command::Command(
         wpn_t = wpn_t_map[cmd_tkns[1]];
         count = std::stoi(cmd_tkns[2]);
         break;
+
+    default: // error
+        break;
     }
 }
+
+Command::Command(
+    int money,
+    bool knife,
+    WeaponName primary,
+    WeaponName secondary,
+    int primary_ammo,
+    int secondary_ammo) :
+    money(money),
+    knife(knife),
+    primary(primary),
+    secondary(secondary),
+    primary_ammo(primary_ammo),
+    secondary_ammo(secondary_ammo) {}
 
 Type Command::get_t() const {
     return t;    
 }
 
-Weapon Command::get_wpn() const {
+WeaponName Command::get_wpn() const {
     return wpn;
 }
 
@@ -87,6 +104,26 @@ WeaponType Command::get_wpn_t() const {
 
 int Command::get_count() const {
     return count;
+}
+
+bool Command::get_money() const {
+    return money;
+}
+
+WeaponName Command::get_primary() const {
+    return primary;
+}
+
+WeaponName Command::get_secondary() const {
+    return secondary;
+}
+
+int Command::get_primary_ammo() const {
+    return primary_ammo;
+}
+
+int Command::get_secondary_ammo() const {
+    return secondary_ammo;
 }
 
 bool Command::operator==(

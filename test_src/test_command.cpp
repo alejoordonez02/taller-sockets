@@ -8,7 +8,7 @@ void test_constructor_buy_awp() {
     std::string cmd_str = "buy awp";
 
     Type expected_type = Type::BUY;
-    Weapon expected_weapon = Weapon::AWP;
+    WeaponName expected_weapon = WeaponName::AWP;
 
     Command cmd(cmd_str);
 

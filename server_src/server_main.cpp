@@ -85,24 +85,8 @@ int main(int argc, char* argv[]) {
         Command cmd;
         ret = prtcl->dsrlz_cmd(cmd, cmd_buf);
 
-        ret = processor.process(cmd);
-
-        int money = player.get_money();
-        bool knife = player.get_knife();
-        WeaponName primary = player.get_primary()->get_name();
-        WeaponName secondary = player.get_secondary()->get_name();
-        int primary_ammo = player.get_primary()->get_ammo();
-        int secondary_ammo = player.get_secondary()->get_ammo();
-
-        Command equipment(
-            Type::EQUIPMENT,
-            money,
-            knife,
-            primary,
-            secondary,
-            primary_ammo,
-            secondary_ammo
-            );
+        Command equipment;
+        ret = processor.process(equipment, cmd);
 
         std::vector<uint8_t> srlzd_equipment;
         ret = prtcl->srlz_cmd(srlzd_equipment, equipment);

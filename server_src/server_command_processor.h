@@ -5,9 +5,14 @@
 class CommandProcessor {
 private:
     Player &player;
+    int process_buy(
+        Command in_cmd);
+    int process_ammo(
+        Command in_cmd);
 public:
     CommandProcessor(
         Player &player);
-    bool process(
-        Command cmd);
+    int process(
+        Command &out_cmd,
+        Command in_cmd);
 };

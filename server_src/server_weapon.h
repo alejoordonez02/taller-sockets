@@ -1,7 +1,7 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-#include <string>
+#include <optional>
 
 #include "../common_src/common_weapon_names.h"
 
@@ -12,10 +12,13 @@ protected:
     int ammo;
     int ammo_cost;
 public:
+    static Weapon create(
+        WeaponName name);
     Weapon(
         WeaponName name,
         int cost,
         int ammo_cost);
+    Weapon(); // none
     WeaponName get_name();
     int get_ammo();
     int get_cost();

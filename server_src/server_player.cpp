@@ -32,40 +32,65 @@ std::optional<Weapon> Player::get_secondary() {
     return secondary;
 }
 
-bool Player::buy_primary(
+int Player::buy_primary(
     Weapon &weapon) {
 
     if (money < weapon.get_cost())
-        return false;
+        return -1;
 
     money -= weapon.get_cost();
     primary = weapon;
 
-    return true;
+    return 0;
 }
 
-bool Player::buy_ammo(
+int Player::buy_ammo(
     std::optional<Weapon> &weapon,
     int count) {
 
     if (money < count * weapon->get_ammo_cost()
         || !weapon.has_value())
-        return false;
+        return -1;
 
     money -= count * weapon->get_ammo_cost();
     weapon->load_ammo(count);
 
-    return true;
+    return 0;
 }
 
-bool Player::buy_ammo_primary(
+int Player::buy_ammo_primary(
     int count) {
 
     return buy_ammo(primary, count);
 }
 
-bool Player::buy_ammo_secondary(
+int Player::buy_ammo_secondary(
     int count) {
 
     return buy_ammo(secondary, count);
 }
+
+WeaponName Player::get_primary_name() {
+    if (!primary.has_value())
+        return WeaponName::NONE;
+    return primary->get_name();
+}
+
+WeaponName Player::get_secondary_name() {
+    if (!secondary.has_value())
+        return WeaponName::NONE;
+    return secondary->get_name();
+}
+
+int Player::get_primary_ammo() {
+    if (!primary.has_value())
+        return 0;
+    return primary->get_ammo();
+}
+
+int Player::get_secondary_ammo() {
+    if (!secondary.has_value())
+        return 0;
+    return secondary->get_ammo();
+}
+

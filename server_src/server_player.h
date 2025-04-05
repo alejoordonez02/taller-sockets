@@ -13,7 +13,7 @@ private:
     bool knife;
     std::optional<Weapon> primary;
     std::optional<Weapon> secondary;
-    bool buy_ammo(
+    int buy_ammo(
         std::optional<Weapon> &weapon,
         int count);
 public:
@@ -24,12 +24,16 @@ public:
     bool get_knife();
     std::optional<Weapon> get_primary();
     std::optional<Weapon> get_secondary();
-    bool buy_primary(
+    int buy_primary(
         Weapon &weapon);
-    bool buy_ammo_primary(
+    int buy_ammo_primary(
         int count);
-    bool buy_ammo_secondary(
+    int buy_ammo_secondary(
         int count);
+    WeaponName get_primary_name();
+    WeaponName get_secondary_name();
+    int get_primary_ammo();
+    int get_secondary_ammo();
 };
 
 #endif

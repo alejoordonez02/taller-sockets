@@ -33,7 +33,7 @@ void test_buy_ammo_secondary() {
 
     int ret = player.buy_ammo_secondary(count);
 
-    assert(ret);
+    assert(!ret);
     assert(player.get_secondary()->get_ammo() == expected_count);
     assert(player.get_money() == expected_money);
 
@@ -48,7 +48,7 @@ void test_buy_ammo_primary_returns_false_if_non_primary() {
 
     int ret = player.buy_ammo_primary(count);
 
-    assert(!ret);
+    assert(ret);
     assert(player.get_money() == expected_money);
 
     std::cout << "passed test_buy_ammo_primary_returns_false_if_non_primary()!\n";
@@ -61,9 +61,9 @@ void test_buy_ammo_returns_false_if_not_enough_money() {
     int expected_count = 30;
     int expected_money = 500;
 
-    bool ret = player.buy_ammo_secondary(count);
+    int ret = player.buy_ammo_secondary(count);
 
-    assert(!ret);
+    assert(ret);
     assert(player.get_secondary()->get_ammo() == expected_count);
     assert(player.get_money() == expected_money);
 
@@ -77,9 +77,9 @@ void test_buy_primary() {
     Weapon expected_primary = weapon;
     int expected_money = 400;
 
-    bool ret = player.buy_primary(weapon);
+    int ret = player.buy_primary(weapon);
 
-    assert(ret);
+    assert(!ret);
     assert(player.get_primary() == expected_primary);
     assert(player.get_money() == expected_money);
 

@@ -14,9 +14,10 @@ void test_process_buy() {
     Weapon expected_primary = Ak47();
     int expected_money = 400;
 
-    bool ret = processor.process(command);
+    Command output;
+    int ret = processor.process(output, command);
 
-    assert(ret);
+    assert(!ret);
     assert(player.get_primary() == expected_primary);
     assert(player.get_money() == expected_money);
 
@@ -31,9 +32,10 @@ void test_process_ammo() {
     int expected_count = 130;
     int expected_money = 400;
 
-    bool ret = processor.process(command);
+    Command output;
+    int ret = processor.process(output, command);
 
-    assert(ret);
+    assert(!ret);
     assert(player.get_secondary()->get_ammo() == expected_count);
     assert(player.get_money() == expected_money);
 

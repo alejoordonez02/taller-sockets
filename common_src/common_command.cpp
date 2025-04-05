@@ -44,7 +44,13 @@ Command::Command(
     t(t),
     wpn(wpn),
     wpn_t(WeaponType::NONE),
-    count(0) {}
+    count(0),
+    money(0),
+    knife(false),
+    primary(WeaponName::NONE),
+    secondary(WeaponName::NONE),
+    primary_ammo(0),
+    secondary_ammo(0) {}
 
 Command::Command(
     Type t,
@@ -53,7 +59,13 @@ Command::Command(
     t(t),
     wpn(WeaponName::NONE),
     wpn_t(wpn_t),
-    count(count) {}
+    count(count),
+    money(0),
+    knife(false),
+    primary(WeaponName::NONE),
+    secondary(WeaponName::NONE),
+    primary_ammo(0),
+    secondary_ammo(0) {}
 
 Command::Command(
     std::string cmd) {
@@ -77,12 +89,17 @@ Command::Command(
 }
 
 Command::Command(
+    Type t,
     int money,
     bool knife,
     WeaponName primary,
     WeaponName secondary,
     int primary_ammo,
     int secondary_ammo) :
+    t(t),
+    wpn(WeaponName::NONE),
+    wpn_t(WeaponType::NONE),
+    count(0),
     money(money),
     knife(knife),
     primary(primary),
@@ -106,8 +123,12 @@ int Command::get_count() const {
     return count;
 }
 
-bool Command::get_money() const {
+int Command::get_money() const {
     return money;
+}
+
+bool Command::get_knife() const {
+    return knife;
 }
 
 WeaponName Command::get_primary() const {
@@ -137,6 +158,13 @@ bool Command::operator==(
     case Type::AMMO:
         return (wpn_t == cmd.wpn_t
             && count == cmd.count);
+    case Type::EQUIPMENT:
+        return (money == cmd.money
+            && knife == cmd.knife
+            && primary == cmd.primary
+            && secondary == cmd.secondary
+            && primary_ammo == cmd.primary_ammo
+            && secondary_ammo == cmd.secondary_ammo);
     default:
         return false;
     }

@@ -32,6 +32,7 @@ public:
     Command(
         std::string cmd);
     Command(
+        Type t,
         int money,
         bool knife,
         WeaponName primary,
@@ -42,7 +43,8 @@ public:
     WeaponName get_wpn() const;
     WeaponType get_wpn_t() const;
     int get_count() const;
-    bool get_money() const;
+    int get_money() const;
+    bool get_knife() const;
     WeaponName get_primary() const;
     WeaponName get_secondary() const;
     int get_primary_ammo() const;

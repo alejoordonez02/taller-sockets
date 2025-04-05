@@ -62,7 +62,7 @@ run_command_processor: test_command_processor
 run_all: $(TESTS)
 	@echo "Running all tests..."
 	@for test in $(TESTS); do \
-		echo "\n--- Running $$test ---"; \
+		echo "--- Running $$test ---"; \
 		./$$test; \
 	done
 

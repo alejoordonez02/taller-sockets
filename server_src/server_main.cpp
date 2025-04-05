@@ -6,7 +6,7 @@
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_command.h"
-#include "common_command_processor.h"
+#include "server_command_processor.h"
 
 #define PROTOCOL_TYPE_BINARY "binary"
 #define PROTOCOL_TYPE_TEXT "text"
@@ -60,6 +60,18 @@ int main(int argc, char* argv[]) {
     auto prtcl = Protocol::create(prtcl_t);
 
     /*
+     * instanciar el
+     * player
+     ***/
+    Player player(username);
+
+    /*
+     * instanciar el
+     * procesador
+     ***/
+    CommandProcessor processor(player);
+
+    /*
      * escuchar al server
      * y actualizar el modelo
      ***/
@@ -73,11 +85,31 @@ int main(int argc, char* argv[]) {
         Command cmd;
         ret = prtcl->dsrlz_cmd(cmd, cmd_buf);
 
-        // CommandProcessor(cmd) -> actualizar el modelo
+        ret = processor.process(cmd);
 
-        // clt.sendsome equipment
-        // if (clt.is_stream_send_closed())
-        //     return ret;
+        int money = player.get_money();
+        bool knife = player.get_knife();
+        WeaponName primary = player.get_primary()->get_name();
+        WeaponName secondary = player.get_secondary()->get_name();
+        int primary_ammo = player.get_primary()->get_ammo();
+        int secondary_ammo = player.get_secondary()->get_ammo();
+
+        Command equipment(
+            Type::EQUIPMENT,
+            money,
+            knife,
+            primary,
+            secondary,
+            primary_ammo,
+            secondary_ammo
+            );
+
+        std::vector<uint8_t> srlzd_equipment;
+        ret = prtcl->srlz_cmd(srlzd_equipment, equipment);
+
+        clt.sendall(srlzd_equipment.data(), srlzd_equipment.size());
+        if (clt.is_stream_send_closed())
+            return ret;
     }
 
     return ret;

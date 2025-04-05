@@ -3,8 +3,9 @@
 
 #include <string>
 
+#include "../common_src/common_weapon_names.h"
+
 enum class Type {EQUIPMENT, BUY, AMMO};
-enum class WeaponName {NONE, GLOCK, AK47, M3, AWP};
 enum class WeaponType {NONE, PRIMARY, SECONDARY};
 
 class Command {             //

@@ -6,6 +6,7 @@
 
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
+#include "../common_src/common_command.h"
 
 #define BUF_SIZE 512
 
@@ -54,7 +55,25 @@ int main(int argc, char* argv[]) {
 
         srv.sendall(srlzd_cmd.data(), srlzd_cmd.size());
 
-        // srv.recv -> std::out / Printer
+        char srlzd_equipment[BUF_SIZE];
+        srv.recvsome(srlzd_equipment, sizeof(srlzd_equipment));
+
+        Command equipment;
+        prtcl->dsrlz_cmd(equipment, srlzd_equipment);
+
+    // Type get_t() const;
+    // WeaponName get_wpn() const;
+    // WeaponType get_wpn_t() const;
+    // int get_count() const;
+    // int get_money() const;
+    // bool get_knife() const;
+    // WeaponName get_primary() const;
+    // WeaponName get_secondary() const;
+    // int get_primary_ammo() const;
+    // int get_secondary_ammo() const;
+        printf("primary ammo: %d\n", equipment.get_primary_ammo());
+        printf("money: %d\n", equipment.get_money());
+        printf("knife: %d\n", equipment.get_knife());
     }
 
     return ret;

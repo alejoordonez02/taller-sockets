@@ -1,7 +1,8 @@
 #include "server_weapon.h"
+#include "../common_src/common_weapon_names.h"
 
 Weapon::Weapon(
-    const std::string &name,
+    WeaponName name,
     int cost,
     int ammo_cost) :
     name(name),
@@ -9,7 +10,7 @@ Weapon::Weapon(
     ammo(30),
     ammo_cost(ammo_cost) {}
 
-std::string Weapon::get_name() {
+WeaponName Weapon::get_name() {
     return name;
 }
 
@@ -31,13 +32,13 @@ void Weapon::load_ammo(
     ammo += count;
 }
 
-Glock::Glock() : Weapon("glock", 100, 1) {}
+Glock::Glock() : Weapon(WeaponName::GLOCK, 100, 1) {}
 
-Ak47::Ak47() : Weapon("ak-47", 100, 1) {}
+Ak47::Ak47() : Weapon(WeaponName::AK47, 100, 1) {}
 
-M3::M3() : Weapon("m3", 100, 1) {}
+M3::M3() : Weapon(WeaponName::M3, 100, 1) {}
 
-Awp::Awp() : Weapon("awp", 100, 1) {}
+Awp::Awp() : Weapon(WeaponName::AWP, 100, 1) {}
 
 bool Weapon::operator==(
     const Weapon& weapon) const {

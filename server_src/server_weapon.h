@@ -3,18 +3,20 @@
 
 #include <string>
 
+#include "../common_src/common_weapon_names.h"
+
 class Weapon {
 protected:
-    std::string name;
+    WeaponName name;
     int cost;
     int ammo;
     int ammo_cost;
 public:
     Weapon(
-        const std::string &name,
+        WeaponName name,
         int cost,
         int ammo_cost);
-    std::string get_name();
+    WeaponName get_name();
     int get_ammo();
     int get_cost();
     int get_ammo_cost();

@@ -7,6 +7,7 @@
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_command.h"
+#include "../common_src/common_output.h"
 
 #define BUF_SIZE 512
 
@@ -61,9 +62,7 @@ int main(int argc, char* argv[]) {
         Command equipment;
         prtcl->dsrlz_cmd(equipment, srlzd_equipment);
 
-        printf("primary ammo: %d\n", equipment.get_primary_ammo());
-        printf("money: %d\n", equipment.get_money());
-        printf("knife: %d\n", equipment.get_knife());
+        Output::output_equipment(equipment);
     }
 
     return ret;

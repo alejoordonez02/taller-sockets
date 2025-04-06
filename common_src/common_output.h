@@ -3,6 +3,8 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
+#include <string>
+
 #include "common_command.h"
 
 class Output {
@@ -15,7 +17,7 @@ public:
 // tiene que mandar el mensaje, ah, puede construir el output
 // enviarselo al client serializado por el protocol y que el
 // server deserialice y ejecute ;)
-    static void output_equipment(
+    static std::string output_equipment(
         Command equipment);
 };
 

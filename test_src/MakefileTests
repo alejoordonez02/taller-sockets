@@ -13,8 +13,10 @@ MODEL_SRC = ../server_src/server_player.cpp \
 
 COMMAND_PROCESSOR_SRC = ../server_src/server_command_processor.cpp
 
+OUTPUT_SRC = ../common_src/common_output.cpp
+
 TESTS = test_command test_protocol test_binary_protocol test_player \
-	test_weapon test_command_processor
+	test_weapon test_command_processor test_output
 
 all: $(TESTS)
 
@@ -41,6 +43,11 @@ test_command_processor: test_command_processor.cpp \
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< \
 	$(COMMAND_PROCESSOR_SRC) $(COMMAND_SRC) $(MODEL_SRC)
 
+test_output: test_output.cpp \
+	$(OUTPUT_SRC) $(COMMAND_SRC)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< \
+	$(OUTPUT_SRC) $(COMMAND_SRC)
+
 run_command: test_command
 	./test_command
 
@@ -58,6 +65,9 @@ run_weapon: test_weapon
 
 run_command_processor: test_command_processor
 	./test_command_processor
+
+run_output: test_output
+	./test_output
 
 run_all: $(TESTS)
 	@echo "Running all tests..."
@@ -90,5 +100,8 @@ test_command_processor.o: test_command_processor.cpp \
 	../server_src/server_player.h \
 	../server_src/server_weapon.h
 
+test_output.o: test_output.src \
+	../common_src/common_output.h \
+	../common_src/common_command.h
 
 .PHONY: all clean run_command run_protocol run_binary run_player run_weapon run_command_processor run_all

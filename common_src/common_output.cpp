@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <map>
 
 #include "common_output.h"
@@ -15,14 +16,30 @@ std::map<WeaponName, std::string> weapon_name {
 };
 
 // money: $500 | knife: equipped | primary: not_equipped | secondary: glock, 30
-void Output::output_equipment(
+std::string Output::output_equipment(
     Command equipment) {
 
-    std::cout << "money: $" << equipment.get_money()
+    std::stringstream output;
+    output << "money: $" << equipment.get_money()
+
         << " | knife: " << (equipment.get_knife() ? "equipped" : "not equipped")
-        << " | primary: " << weapon_name[equipment.get_primary()]
-        << ", " << equipment.get_primary_ammo()
-        << " | secondary: " << weapon_name[equipment.get_secondary()]
-        << ", " << equipment.get_secondary_ammo()
-        << std::endl;
+
+        << " | primary: ";
+
+        if (equipment.get_primary() == WeaponName::NONE)
+            output << "not equipped";
+        else
+            output << weapon_name[equipment.get_primary()]
+            << ", " <<  equipment.get_primary_ammo();
+
+        output << " | secondary: ";
+        if (equipment.get_secondary() == WeaponName::NONE)
+            output << "not equipped";
+        else
+            output << weapon_name[equipment.get_secondary()]
+            << ", " << equipment.get_secondary_ammo();
+
+        output << std::endl;
+
+    return  output.str();
 }

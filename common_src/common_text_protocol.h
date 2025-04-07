@@ -2,16 +2,25 @@
 #define TEXT_PROTOCOL_H
 
 #include "common_protocol.h"
+#include "common_socket.h"
 
 class TextProtocol : public Protocol {
+private:
+    const Socket skt;
 public:
-    int srlz_cmd(
-        std::vector<uint8_t> &srlzd_cmd,
-        const Command &cmd) override;
+    TextProtocol(Socket&& skt);
 
-    int dsrlz_cmd(
-        Command &cmd,
-        const char *srlzd_cmd) override;
+    /*
+     * Commands
+     * */
+    int send(const Command& cmd) const override;
+    int recv(Command& cmd) const override;
+
+    /*
+     * Outputs
+     * */
+    int send(const Output& output) const override;
+    int recv(Output& output) const override;
 };
 
 #endif

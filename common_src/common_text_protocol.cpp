@@ -1,15 +1,16 @@
 #include "common_text_protocol.h"
 
-int TextProtocol::srlz_cmd(
-    std::vector<uint8_t> &srlzd_cmd,
-    const Command &cmd) {
 
-    return 0;
-}
+TextProtocol::TextProtocol(Socket&& skt) : skt(std::move(skt)) {}
 
-int TextProtocol::dsrlz_cmd(
-    Command &cmd,
-    const char*srlzd_cmd) {
+/*
+ * Commands
+ * */
+int TextProtocol::send(const Command& cmd) {return 0;}
+int TextProtocol::recv(Command& cmd) {return 0;}
 
-    return 0;
-}
+/*
+ * Outputs
+ * */
+int TextProtocol::send(const Output& output) {return 0;}
+int TextProtocol::recv(Output& output) {return 0;}

@@ -2,43 +2,65 @@
 #define PROTOCOL_H
 
 #include <string>
-#include <vector>
-#include <cstdint>
 #include <memory>
 
+#include "common_socket.h"
 #include "common_command.h"
+#include "common_output.h"
 
-enum class ProtocolType {TEXT, BINARY};
+enum class ProtocolType {BINARY, TEXT};
 
 class Protocol {
-protected:
-    std::vector<std::string> tknz(
-        const std::string &s);
+private:
+    static int create(
+        Protocol*& protocol,
+        const ProtocolType& type,
+        Socket& skt);
 public:
-    static std::unique_ptr<Protocol> create(
-        const ProtocolType &prtcl_t);
+    /*
+     * Server protocol factory
+     * */
+    static int create(
+        Protocol*& protocol,
+        const ProtocolType& type,
+        const std::string& servname);
 
-    virtual int srlz_cmd(
-        std::vector<uint8_t> &srlzd_cmd,
-        const Command &cmd) = 0;
+    /*
+     * Client protocol factory
+     * */
+    static int create(
+        Protocol*& protocol,
+        const ProtocolType& type,
+        const std::string& hostname,
+        const std::string& servname);
 
-    virtual int dsrlz_cmd(
-        Command &cmd,
-        const char *srlzd_cmd) = 0;
+    /*
+     * Username
+     * */
+    static int send_username(const std::string& username);
+    static int recv_username(std::string& username);
 
-    static int srlz_username(
-        std::vector<uint8_t> &srlzd_username,
-        const std::string &username);
-    static int srlz_prtcl_t(
-        std::vector<uint8_t> &srlzd_prtcl_t,
-        const std::string &prtcl_t);
+    /*
+     * Protocol type
+     * */
+    static int send_type(const ProtocolType& type);
+    static int recv_type(ProtocolType& type);
 
-    static int dsrlz_username(
-        std::string &username,
-        const char *srlzd_username);
-    static int dsrlz_prtcl_t(
-        ProtocolType *prtcl_t,
-        const char *srlzd_prtcl_t);
+    /*
+     * Commands
+     * */
+    virtual int send(const Command& cmd) const = 0;
+    virtual int recv(Command& cmd) const = 0;
+
+    /*
+     * Outputs
+     * */
+    virtual int send(const Output& output) const = 0;
+    virtual int recv(Output& output) const = 0;
+
+    /*
+     * Destructor
+     * */
     virtual ~Protocol() = default;
 };
 

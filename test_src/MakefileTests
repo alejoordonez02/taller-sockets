@@ -21,6 +21,8 @@ COMMAND_SRC = ../common_src/common_command.cpp
 
 OUTPUT_SRC = ../common_src/common_output.cpp
 
+TOKENIZER_SRC = ../common_src/common_tokenizer.cpp
+
 
 SOCKET = $(SOCKET_SRC:.cpp=.o)
 PROTOCOL = $(PROTOCOL_SRC:.cpp=.o)
@@ -29,20 +31,24 @@ BINARY_SERIALIZER = $(BINARY_SERIALIZER_SRC:.cpp=.o)
 TEXT_SERIALIZER = $(TEXT_SERIALIZER_SRC:.cpp=.o)
 COMMAND = $(COMMAND_SRC:.cpp=.o)
 OUTPUT = $(OUTPUT_SRC:.cpp=.o)
+TOKENIZER = $(TOKENIZER_SRC:.cpp=.o)
 
 # TESTS
-TESTS = test_protocol test_serializer
+TESTS = test_protocol test_serializer test_command
 
 all: $(TESTS)
 
 clean:
 	rm -f $(TESTS) *.o
 
-test_protocol: test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT)
+test_protocol: test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT) $(TOKENIZER)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT) $(TOKENIZER)
 
 test_serializer: test_serializer.o $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_serializer.o $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER)
+
+test_command: test_command.o $(COMMAND) $(TOKENIZER)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_command.o $(COMMAND) $(TOKENIZER)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@

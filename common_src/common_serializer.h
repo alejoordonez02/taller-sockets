@@ -4,11 +4,42 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <memory>
 
-#include "common_protocol.h"
+#include "common_protocol_types.h"
+#include "common_command.h"
+#include "common_output.h"
 
 class Serializer {
 public:
+    /*
+     * Commands
+     * */
+    virtual int serialize(
+        std::vector<uint8_t>& srlzd_cmd,
+        const Command& cmd) const = 0;
+    virtual int deserialize(
+        Command& dsrlzd_cmd,
+        const std::vector<uint8_t>& srlzd_cmd) const = 0;
+
+    /*
+     * Outputs
+     * */
+    virtual int serialize(
+        std::vector<uint8_t>& srlzd_output,
+        const Output& output) const = 0;
+    virtual int deserialize(
+        Output& dsrlzd_output,
+        const std::vector<uint8_t>& srlzd_output) const = 0;
+
+/*
+ * Static methods
+ * */
+    /*
+     * Factory
+     * */
+    static std::unique_ptr<Serializer> create(const ProtocolType& type);
+
     /*
      * Username
      * */
@@ -30,26 +61,6 @@ public:
     static int deserialize_protocol_type(
         ProtocolType& dsrlzd_type,
         const std::vector<uint8_t>& srlzd_type);
-
-    /*
-     * Commands
-     * */
-    virtual int serialize(
-        std::vector<uint8_t>& srlzd_cmd,
-        const Command& cmd) const = 0;
-    virtual int deserialize(
-        Command& dsrlzd_cmd,
-        const std::vector<uint8_t>& srlzd_cmd) const = 0;
-
-    /*
-     * Outputs
-     * */
-    virtual int serialize(
-        std::vector<uint8_t>& srlzd_output,
-        const Output& output) const = 0;
-    virtual int deserialize(
-        Output& dsrlzd_output,
-        const std::vector<uint8_t>& srlzd_output) const = 0;
 };
 
 #endif

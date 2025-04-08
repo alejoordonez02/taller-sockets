@@ -2,14 +2,37 @@
 #include <vector>
 #include <cstdint>
 #include <arpa/inet.h>
+#include <memory>
 
 #include "common_serializer.h"
+#include "common_binary_serializer.h"
+#include "common_text_serializer.h"
+#include "common_protocol.h"
+#include "common_command.h"
+#include "common_output.h"
 
 #define SRL_USERNAME 0x01
 #define SRL_PROTOCOL_TYPE 0x06
 
 #define SRL_BINARY 0x07
 #define SRL_TEXT 0x08
+
+/*
+ * Static methods
+ * */
+/*
+ * Factory
+ * */
+std::unique_ptr<Serializer> Serializer::create(const ProtocolType& type) {
+    switch(type) {
+    case ProtocolType::BINARY:
+        return std::unique_ptr<BinarySerializer>();
+    case ProtocolType::TEXT:
+        return std::unique_ptr<TextSerializer>();
+    default:
+        return nullptr;
+    }
+}
 
 /*
  * Username

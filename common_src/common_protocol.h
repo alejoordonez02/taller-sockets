@@ -4,64 +4,58 @@
 #include <string>
 #include <memory>
 
+#include "common_protocol_types.h"
 #include "common_socket.h"
+#include "common_serializer.h"
 #include "common_command.h"
 #include "common_output.h"
 
-enum class ProtocolType {BINARY, TEXT};
-
 class Protocol {
 private:
-    static int create(
-        Protocol*& protocol,
-        const ProtocolType& type,
-        Socket& skt);
+    std::unique_ptr<Serializer> srl;
+    Socket skt;
 public:
     /*
-     * Server protocol factory
+     * Server protocol
      * */
-    static int create(
-        Protocol*& protocol,
+    Protocol(
         const ProtocolType& type,
         const std::string& servname);
 
     /*
-     * Client protocol factory
+     * Client protocol
      * */
-    static int create(
-        Protocol*& protocol,
+    Protocol(
         const ProtocolType& type,
         const std::string& hostname,
         const std::string& servname);
 
     /*
-     * Username
+     * Commands
+     * */
+    int send(const Command& cmd);
+    int recv(Command& cmd);
+
+    /*
+     * Outputs
+     * */
+    int send(const Output& output);
+    int recv(Output& output);
+
+ /*
+  * Static methods
+  * */
+    /*
+     * Send username
      * */
     static int send_username(const std::string& username);
     static int recv_username(std::string& username);
 
     /*
-     * Protocol type
+     * Send protocol type
      * */
     static int send_type(const ProtocolType& type);
     static int recv_type(ProtocolType& type);
-
-    /*
-     * Commands
-     * */
-    virtual int send(const Command& cmd) const = 0;
-    virtual int recv(Command& cmd) const = 0;
-
-    /*
-     * Outputs
-     * */
-    virtual int send(const Output& output) const = 0;
-    virtual int recv(Output& output) const = 0;
-
-    /*
-     * Destructor
-     * */
-    virtual ~Protocol() = default;
 };
 
 #endif

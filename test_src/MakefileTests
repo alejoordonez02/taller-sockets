@@ -4,24 +4,31 @@ CXXFLAGS = -Wall -Wextra -std=c++17 -g -D_GNU_SOURCE -D _POSIX_C_SOURCE=200809L
 INCLUDES = -I../common_src
 
 # SOURCES
-PROTOCOL_SRC = ../common_src/common_protocol.cpp \
-	../common_src/common_binary_protocol.cpp \
-	../common_src/common_text_protocol.cpp \
-	../common_src/common_output.cpp \
-	../common_src/common_command.cpp
-
-SERIALIZER_SRC = ../common_src/common_serializer.cpp \
-	../common_src/common_binary_serializer.cpp \
-	../common_src/common_text_serializer.cpp
-
 SOCKET_SRC = ../common_src/common_socket.cpp \
 	../common_src/common_liberror.cpp \
 	../common_src/common_resolver.cpp \
 	../common_src/common_resolvererror.cpp
 
-PROTOCOL = $(PROTOCOL_SRC:.cpp=.o)
+PROTOCOL_SRC = ../common_src/common_protocol.cpp
+
+SERIALIZER_SRC = ../common_src/common_serializer.cpp
+
+BINARY_SERIALIZER_SRC = ../common_src/common_binary_serializer.cpp
+
+TEXT_SERIALIZER_SRC = ../common_src/common_text_serializer.cpp
+
+COMMAND_SRC = ../common_src/common_command.cpp
+
+OUTPUT_SRC = ../common_src/common_output.cpp
+
+
 SOCKET = $(SOCKET_SRC:.cpp=.o)
+PROTOCOL = $(PROTOCOL_SRC:.cpp=.o)
 SERIALIZER = $(SERIALIZER_SRC:.cpp=.o)
+BINARY_SERIALIZER = $(BINARY_SERIALIZER_SRC:.cpp=.o)
+TEXT_SERIALIZER = $(TEXT_SERIALIZER_SRC:.cpp=.o)
+COMMAND = $(COMMAND_SRC:.cpp=.o)
+OUTPUT = $(OUTPUT_SRC:.cpp=.o)
 
 # TESTS
 TESTS = test_protocol test_serializer
@@ -31,11 +38,11 @@ all: $(TESTS)
 clean:
 	rm -f $(TESTS) *.o
 
-test_protocol: test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER)
+test_protocol: test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_protocol.o $(PROTOCOL) $(SOCKET) $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER) $(COMMAND) $(OUTPUT)
 
-test_serializer: test_serializer.o $(SERIALIZER)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_serializer.o $(SERIALIZER)
+test_serializer: test_serializer.o $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_serializer.o $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SERIALIZER)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@

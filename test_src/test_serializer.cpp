@@ -5,6 +5,8 @@
 #include <cstdint>
 
 #include "../common_src/common_serializer.h"
+#include "../common_src/common_binary_serializer.h"
+#include "../common_src/common_text_serializer.h"
 
 void test00_serialize_username_returns_expected_srl() {
     std::string username = "mate";
@@ -104,6 +106,30 @@ void test05_deserialize_text_protocol_type_returns_text_type() {
     std::cout << "Passed 05!\n";
 }
 
+void test06_create_binary_serializer_returns_binary_serializer() {
+    ProtocolType type = ProtocolType::BINARY;
+    std::unique_ptr<Serializer> srl;
+
+    srl = Serializer::create(type);
+
+    assert(srl != nullptr);
+    assert(typeid(*srl) == typeid(BinarySerializer));
+
+    std::cout << "Passed 06!\n";
+}
+
+void test07_create_text_serializer_returns_text_serializer() {
+    ProtocolType type = ProtocolType::TEXT;
+    std::unique_ptr<Serializer> srl;
+
+    srl = Serializer::create(type);
+
+    assert(srl != nullptr);
+    assert(typeid(*srl) == typeid(TextSerializer));
+
+    std::cout << "Passed 07!\n";
+}
+
 int main() {
     test00_serialize_username_returns_expected_srl();
     test01_serialize_protocol_type_binary_returns_expected_srl();
@@ -111,6 +137,8 @@ int main() {
     test03_deserialize_username_returns_expected_username();
     test04_deserialize_binary_protocol_type_returns_binary_type();
     test05_deserialize_text_protocol_type_returns_text_type();
+    test06_create_binary_serializer_returns_binary_serializer();
+    test07_create_text_serializer_returns_text_serializer();
 
     return 0;
 }

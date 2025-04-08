@@ -26,9 +26,9 @@
 std::unique_ptr<Serializer> Serializer::create(const ProtocolType& type) {
     switch(type) {
     case ProtocolType::BINARY:
-        return std::unique_ptr<BinarySerializer>();
+        return std::make_unique<BinarySerializer>();
     case ProtocolType::TEXT:
-        return std::unique_ptr<TextSerializer>();
+        return std::make_unique<TextSerializer>();
     default:
         return nullptr;
     }

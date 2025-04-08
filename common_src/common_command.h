@@ -15,10 +15,10 @@ private:
     static const std::map<std::string, WeaponName> s_to_weapon_name;
     static const std::map<std::string, WeaponType> s_to_weapon_type;
 
-    CommandType type;
-    WeaponName weapon_name;
-    WeaponType weapon_type;
-    int count;
+    const CommandType type;
+    const WeaponName weapon_name;
+    const WeaponType weapon_type;
+    const int count;
 public:
     /*
      * From string
@@ -39,6 +39,15 @@ public:
         const CommandType& type,
         const WeaponType& weapon_type,
         const int& count);
+
+    /*
+     * Getters
+     * */
+    CommandType get_type() const;
+    WeaponName get_weapon_name() const;
+    WeaponType get_weapon_type() const;
+    int get_count() const;
+
 
     /*
      * Operator==

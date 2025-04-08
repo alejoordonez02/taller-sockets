@@ -74,6 +74,25 @@ Command::Command(
     count(count) {}
 
 /*
+ * Getters
+ * */
+CommandType Command::get_type() const {
+    return type;
+}
+
+WeaponName Command::get_weapon_name() const {
+    return weapon_name;
+}
+
+WeaponType Command::get_weapon_type() const {
+    return weapon_type;
+}
+
+int Command::get_count() const {
+    return count;
+}
+
+/*
  * Operator==
  * */
 bool Command::operator==(

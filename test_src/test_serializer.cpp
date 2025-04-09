@@ -1,21 +1,17 @@
 #include <cassert>
+#include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
-#include <cstdint>
-#include <memory>
 
-#include "../common_src/common_serializer.h"
 #include "../common_src/common_binary_serializer.h"
+#include "../common_src/common_serializer.h"
 #include "../common_src/common_text_serializer.h"
 
 void test00_serialize_username_returns_expected_srl() {
     std::string username = "mate";
-    std::vector<uint8_t> expected_srl = {
-        0x01,
-        0x00, 0x04,
-        0x6d, 0x61, 0x74, 0x65
-    };
+    std::vector<uint8_t> expected_srl = {0x01, 0x00, 0x04, 0x6d, 0x61, 0x74, 0x65};
 
     std::vector<uint8_t> srl;
     int ret = Serializer::serialize_username(srl, username);
@@ -28,10 +24,7 @@ void test00_serialize_username_returns_expected_srl() {
 
 void test01_serialize_protocol_type_binary_returns_expected_srl() {
     ProtocolType type = ProtocolType::BINARY;
-    std::vector<uint8_t> expected_srl = {
-        0x06,
-        0x07
-    };
+    std::vector<uint8_t> expected_srl = {0x06, 0x07};
 
     std::vector<uint8_t> srl;
     int ret = Serializer::serialize_protocol_type(srl, type);
@@ -44,10 +37,7 @@ void test01_serialize_protocol_type_binary_returns_expected_srl() {
 
 void test02_serialize_protocol_type_text_returns_expected_srl() {
     ProtocolType type = ProtocolType::TEXT;
-    std::vector<uint8_t> expected_srl = {
-        0x06,
-        0x08
-    };
+    std::vector<uint8_t> expected_srl = {0x06, 0x08};
 
     std::vector<uint8_t> srl;
     int ret = Serializer::serialize_protocol_type(srl, type);
@@ -59,11 +49,7 @@ void test02_serialize_protocol_type_text_returns_expected_srl() {
 }
 
 void test03_deserialize_username_returns_expected_username() {
-    std::vector<uint8_t> srl = {
-        0x01,
-        0x00, 0x04,
-        0x6d, 0x61, 0x74, 0x65
-    };
+    std::vector<uint8_t> srl = {0x01, 0x00, 0x04, 0x6d, 0x61, 0x74, 0x65};
     std::string expected_dsrl = "mate";
 
     std::string dsrl;
@@ -76,10 +62,7 @@ void test03_deserialize_username_returns_expected_username() {
 }
 
 void test04_deserialize_binary_protocol_type_returns_binary_type() {
-    std::vector<uint8_t> srl = {
-        0x06,
-        0x07
-    };
+    std::vector<uint8_t> srl = {0x06, 0x07};
     ProtocolType expected_dsrl = ProtocolType::BINARY;
 
     ProtocolType dsrl;
@@ -92,10 +75,7 @@ void test04_deserialize_binary_protocol_type_returns_binary_type() {
 }
 
 void test05_deserialize_text_protocol_type_returns_text_type() {
-    std::vector<uint8_t> srl = {
-        0x06,
-        0x08
-    };
+    std::vector<uint8_t> srl = {0x06, 0x08};
     ProtocolType expected_dsrl = ProtocolType::TEXT;
 
     ProtocolType dsrl;

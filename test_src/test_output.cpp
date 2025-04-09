@@ -6,17 +6,10 @@
 #include "../common_src/common_weapon_names.h"
 
 void test00_output_full_equipment_returns_expected_output() {
-    Output output(
-    OutputType::EQUIPMENT,
-    2000,
-    true,
-    WeaponName::M3,
-    90,
-    WeaponName::GLOCK,
-    30);
+    Output output(OutputType::EQUIPMENT, 2000, true, WeaponName::M3, 90, WeaponName::GLOCK, 30);
 
     std::string expected_output =
-    "money: $2000 | knife: equipped | primary: m3, 90 | secondary: glock, 30\n";
+            "money: $2000 | knife: equipped | primary: m3, 90 | secondary: glock, 30\n";
 
     std::string soutput = output.get_output();
 
@@ -26,17 +19,10 @@ void test00_output_full_equipment_returns_expected_output() {
 }
 
 void test01_output_empty_equipment_returns_expected_output() {
-    Output output(
-    OutputType::EQUIPMENT,
-    0,
-    false,
-    WeaponName::NONE,
-    0,
-    WeaponName::NONE,
-    0);
+    Output output(OutputType::EQUIPMENT, 0, false, WeaponName::NONE, 0, WeaponName::NONE, 0);
 
     std::string expected_output =
-    "money: $0 | knife: not equipped | primary: not equipped | secondary: not equipped\n";
+            "money: $0 | knife: not equipped | primary: not equipped | secondary: not equipped\n";
 
     std::string soutput = output.get_output();
 

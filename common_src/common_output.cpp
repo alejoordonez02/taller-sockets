@@ -26,6 +26,24 @@ Output::Output(const OutputType& type, const int& money, const bool& knife,
         secondary_ammo(secondary_ammo) {}
 
 /*
+ * Getters
+ * */
+
+OutputType Output::get_type() const { return type; }
+
+int Output::get_money() const { return money; }
+
+bool Output::get_knife() const { return knife; }
+
+WeaponName Output::get_primary() const { return primary; }
+
+int Output::get_primary_ammo() const { return primary_ammo; }
+
+WeaponName Output::get_secondary() const { return secondary; }
+
+int Output::get_secondary_ammo() const { return secondary_ammo; }
+
+/*
  * Output string
  * */
 std::string Output::output_knife(bool knife) const {

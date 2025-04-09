@@ -46,10 +46,10 @@ void BinarySerializer::initialize_cmd_type_maps() {
     srl_to_cmd_type = get_inverse_map(cmd_type_to_srl);
 }
 
-void BinarySerializer::initialize_output_maps() {
-    output_to_srl = {{OutputType::EQUIPMENT, SRL_EQUIPMENT}};
+void BinarySerializer::initialize_output_type_maps() {
+    output_type_to_srl = {{OutputType::EQUIPMENT, SRL_EQUIPMENT}};
 
-    srl_to_output = get_inverse_map(output_to_srl);
+    srl_to_output_type = get_inverse_map(output_type_to_srl);
 }
 
 void BinarySerializer::initialize_weapon_name_maps() {
@@ -74,7 +74,7 @@ void BinarySerializer::initialize_weapon_type_maps() {
  * */
 BinarySerializer::BinarySerializer() {
     initialize_cmd_type_maps();
-    initialize_output_maps();
+    initialize_output_type_maps();
     initialize_weapon_name_maps();
     initialize_weapon_type_maps();
 }
@@ -82,14 +82,25 @@ BinarySerializer::BinarySerializer() {
 /*
  * Numbers
  * */
-int BinarySerializer::serialize_number(std::vector<uint8_t>& srlzd_cmd, const int& n) const {
+int BinarySerializer::serialize_number(std::vector<uint8_t>& srlzd, const int& n) const {
     uint16_t tmp_n = static_cast<uint16_t>(n);
     tmp_n = htons(tmp_n);
 
     std::vector<uint8_t> srlzd_n(reinterpret_cast<uint8_t*>(&tmp_n),
                                  reinterpret_cast<uint8_t*>(&tmp_n) + sizeof(tmp_n));
 
-    srlzd_cmd.insert(srlzd_cmd.end(), srlzd_n.begin(), srlzd_n.end());
+    srlzd.insert(srlzd.end(), srlzd_n.begin(), srlzd_n.end());
+
+    return 0;
+}
+
+/*
+ * Weapon
+ * */
+int BinarySerializer::serialize_weapon_name(std::vector<uint8_t>& srlzd,
+                                            const WeaponName& weapon) const {
+    uint8_t srlzd_weapon = weapon_name_to_srl.at(weapon);
+    srlzd.push_back(srlzd_weapon);
 
     return 0;
 }
@@ -98,32 +109,29 @@ int BinarySerializer::serialize_number(std::vector<uint8_t>& srlzd_cmd, const in
  * Commands
  * */
 int BinarySerializer::serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const {
+    int ret;
 
     WeaponName weapon_name = cmd.get_weapon_name();
-    uint8_t srlzd_weapon_name = weapon_name_to_srl.at(weapon_name);
+    ret = serialize_weapon_name(srlzd_cmd, weapon_name);
 
-    srlzd_cmd.push_back(srlzd_weapon_name);
-
-    return 0;
+    return ret;
 }
 
 int BinarySerializer::serialize_ammo(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const {
-
     int ret;
 
     WeaponType weapon_type = cmd.get_weapon_type();
     uint8_t srlzd_weapon_type = weapon_type_to_srl.at(weapon_type);
 
     int count = cmd.get_count();
-    ret = serialize_number(srlzd_cmd, count);
 
     srlzd_cmd.push_back(srlzd_weapon_type);
+    ret = serialize_number(srlzd_cmd, count);
 
     return ret;
 }
 
 int BinarySerializer::serialize(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const {
-
     int ret;
 
     srlzd_cmd.clear();
@@ -157,9 +165,49 @@ int BinarySerializer::deserialize(Command& dsrlzd_cmd,
 /*
  * Outputs
  * */
-int BinarySerializer::serialize(std::vector<uint8_t>& srlzd_output, const Output& output) const {
+int BinarySerializer::serialize_equipment(std::vector<uint8_t>& srlzd_output,
+                                          const Output& output) const {
+    int ret;
 
-    return 0;
+    int money = output.get_money();
+    ret = serialize_number(srlzd_output, money);
+
+    uint8_t knife = output.get_knife();
+    srlzd_output.push_back(knife);
+
+    WeaponName primary = output.get_primary();
+    ret = serialize_weapon_name(srlzd_output, primary);
+
+    int primary_ammo = output.get_primary_ammo();
+    ret = serialize_number(srlzd_output, primary_ammo);
+
+    WeaponName secondary = output.get_secondary();
+    ret = serialize_weapon_name(srlzd_output, secondary);
+
+    int secondary_ammo = output.get_secondary_ammo();
+    ret = serialize_number(srlzd_output, secondary_ammo);
+}
+
+int BinarySerializer::serialize(std::vector<uint8_t>& srlzd_output, const Output& output) const {
+    int ret;
+
+    srlzd_output.clear();
+
+    OutputType output_type = output.get_type();
+
+    uint8_t srlzd_output_type = output_type_to_srl.at(output_type);
+    srlzd_output.push_back(srlzd_output_type);
+
+    switch (output_type) {
+        case OutputType::EQUIPMENT:
+            ret = serialize_equipment(srlzd_output, output);
+            break;
+        default:
+            ret = -1;
+            break;
+    }
+
+    return ret;
 }
 
 int BinarySerializer::deserialize(Output& dsrlzd_output,

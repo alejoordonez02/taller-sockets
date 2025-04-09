@@ -29,6 +29,18 @@ public:
      * */
     Output(const OutputType& type, const int& money, const bool& knife, const WeaponName& primary,
            const int& primary_ammo, const WeaponName& secondary, const int& secondary_ammo);
+
+    /*
+     * Getters
+     * */
+    OutputType get_type() const;
+    int get_money() const;
+    bool get_knife() const;
+    WeaponName get_primary() const;
+    int get_primary_ammo() const;
+    WeaponName get_secondary() const;
+    int get_secondary_ammo() const;
+
     /*
      * Output string
      * */

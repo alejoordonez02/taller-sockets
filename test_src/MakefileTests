@@ -34,7 +34,7 @@ OUTPUT = $(OUTPUT_SRC:.cpp=.o)
 TOKENIZER = $(TOKENIZER_SRC:.cpp=.o)
 
 # TESTS
-TESTS = test_protocol test_serializer test_command
+TESTS = test_protocol test_serializer test_command test_output
 
 all: $(TESTS)
 
@@ -50,6 +50,9 @@ test_serializer: test_serializer.o $(SERIALIZER) $(BINARY_SERIALIZER) $(TEXT_SER
 test_command: test_command.o $(COMMAND) $(TOKENIZER)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_command.o $(COMMAND) $(TOKENIZER)
 
+test_output: test_output.o $(OUTPUT)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ test_output.o $(OUTPUT)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
@@ -60,6 +63,12 @@ run_protocol: test_protocol
 run_serializer: test_serializer
 	./test_serializer
 
+run_command: test_command
+	./test_command
+
+run_output: test_output
+	./test_output
+
 run_all: $(TESTS)
 	@echo "Running all tests..."
 	@for test in $(TESTS); do \
@@ -68,4 +77,4 @@ run_all: $(TESTS)
 	done
 
 # PHONY
-.PHONY: all clean run_protocol run_serializer run_all
+.PHONY: all clean run_protocol run_serializer run_command run_output run_all

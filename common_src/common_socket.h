@@ -9,7 +9,7 @@
 #define SOCKET_H
 
 class Socket {
-    private:
+private:
     int skt;
     bool closed;
     int stream_status;
@@ -18,47 +18,32 @@ class Socket {
 
     void chk_skt_or_fail() const;
 
-    public:
-Socket(
-        const char *hostname,
-        const char *servname);
+public:
+    Socket(const char* hostname, const char* servname);
 
-explicit Socket(const char *servname);
+    explicit Socket(const char* servname);
 
-Socket(const Socket&) = delete;
-Socket& operator=(const Socket&) = delete;
+    Socket(const Socket&) = delete;
+    Socket& operator=(const Socket&) = delete;
 
-Socket(Socket&&);
-Socket& operator=(Socket&&);
+    Socket(Socket&&);
+    Socket& operator=(Socket&&);
 
-int sendsome(
-        const void *data,
-        unsigned int sz
-        );
-int recvsome(
-        void *data,
-        unsigned int sz
-        );
+    int sendsome(const void* data, unsigned int sz);
+    int recvsome(void* data, unsigned int sz);
 
-int sendall(
-        const void *data,
-        unsigned int sz
-        );
-int recvall(
-        void *data,
-        unsigned int sz
-        );
+    int sendall(const void* data, unsigned int sz);
+    int recvall(void* data, unsigned int sz);
 
-Socket accept();
+    Socket accept();
 
-void shutdown(int how);
+    void shutdown(int how);
 
-bool is_stream_send_closed() const;
-bool is_stream_recv_closed() const;
+    bool is_stream_send_closed() const;
+    bool is_stream_recv_closed() const;
 
-int close();
+    int close();
 
-~Socket();
+    ~Socket();
 };
 #endif
-

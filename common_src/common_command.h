@@ -3,11 +3,12 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
-#include "common_weapon_names.h"
 #include "common_tokenizer.h"
+#include "common_weapon_names.h"
 
-enum class CommandType {BUY, AMMO};
+enum class CommandType { NONE, BUY, AMMO };
 
 class Command {
 private:
@@ -15,30 +16,31 @@ private:
     static const std::map<std::string, WeaponName> s_to_weapon_name;
     static const std::map<std::string, WeaponType> s_to_weapon_type;
 
-    const CommandType type;
-    const WeaponName weapon_name;
-    const WeaponType weapon_type;
-    const int count;
+    CommandType type;
+    WeaponName weapon_name;
+    WeaponType weapon_type;
+    int count;
+
+    static CommandType get_type(const std::vector<std::string>& cmd_tkns);
+    static WeaponName get_weapon_name(const std::vector<std::string>& cmd_tkns);
+    static WeaponType get_weapon_type(const std::vector<std::string>& cmd_tkns);
+    static int get_count(const std::vector<std::string>& cmd_tkns);
+
 public:
     /*
      * From string
      * */
-    Command(const std::string& s_cmd);
+    explicit Command(const std::string& s_cmd);
 
     /*
      * BUY
      * */
-    Command(
-        const CommandType& type,
-        const WeaponName& weapon_name);
+    Command(const CommandType& type, const WeaponName& weapon_name);
 
     /*
      * AMMO
      * */
-    Command(
-        const CommandType& type,
-        const WeaponType& weapon_type,
-        const int& count);
+    Command(const CommandType& type, const WeaponType& weapon_type, const int& count);
 
     /*
      * Getters

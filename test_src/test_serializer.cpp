@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <memory>
 
 #include "../common_src/common_serializer.h"
 #include "../common_src/common_binary_serializer.h"

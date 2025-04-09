@@ -1,8 +1,8 @@
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 class Tokenizer {
 public:

@@ -1,34 +1,30 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <string>
 #include <memory>
+#include <string>
 
-#include "common_protocol_types.h"
-#include "common_socket.h"
-#include "common_serializer.h"
 #include "common_command.h"
 #include "common_output.h"
+#include "common_protocol_types.h"
+#include "common_serializer.h"
+#include "common_socket.h"
 
 class Protocol {
 private:
     std::unique_ptr<Serializer> srl;
     Socket skt;
+
 public:
     /*
      * Server protocol
      * */
-    Protocol(
-        const ProtocolType& type,
-        const std::string& servname);
+    Protocol(const ProtocolType& type, const std::string& servname);
 
     /*
      * Client protocol
      * */
-    Protocol(
-        const ProtocolType& type,
-        const std::string& hostname,
-        const std::string& servname);
+    Protocol(const ProtocolType& type, const std::string& hostname, const std::string& servname);
 
     /*
      * Commands
@@ -42,9 +38,9 @@ public:
     int send(const Output& output);
     int recv(Output& output);
 
- /*
-  * Static methods
-  * */
+    /*
+     * Static methods
+     * */
     /*
      * Send username
      * */

@@ -8,12 +8,13 @@
 #undef _GNU_SOURCE
 #undef GNU_SOURCE
 
-#include <errno.h>
-#include <cstdio>
+#include "common_liberror.h"
+
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 
-#include "common_liberror.h"
+#include <errno.h>
 
 LibError::LibError(int error_code, const char* fmt, ...) noexcept {
     va_list args;
@@ -32,13 +33,11 @@ LibError::LibError(int error_code, const char* fmt, ...) noexcept {
     } else if (s == sizeof(msg_error)) {
     }
 
-    strerror_r(error_code, msg_error+s, sizeof(msg_error)-s);
+    strerror_r(error_code, msg_error + s, sizeof(msg_error) - s);
 
-    msg_error[sizeof(msg_error)-1] = 0;
+    msg_error[sizeof(msg_error) - 1] = 0;
 }
 
-const char* LibError::what() const noexcept {
-    return msg_error;
-}
+const char* LibError::what() const noexcept { return msg_error; }
 
 LibError::~LibError() {}

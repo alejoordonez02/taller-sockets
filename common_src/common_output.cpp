@@ -12,7 +12,7 @@ const std::map<WeaponName, std::string> Output::weapon_name_to_s = {
 };
 
 /*
- * Equipment
+ * Equipment constructor
  * */
 Output::Output(
     const OutputType& type,

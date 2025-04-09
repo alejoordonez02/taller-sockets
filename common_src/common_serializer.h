@@ -61,6 +61,11 @@ public:
     static int deserialize_protocol_type(
         ProtocolType& dsrlzd_type,
         const std::vector<uint8_t>& srlzd_type);
+
+    /*
+     * Destructor
+     * */
+    virtual ~Serializer() = default;
 };
 
 #endif

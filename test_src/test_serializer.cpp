@@ -108,9 +108,8 @@ void test05_deserialize_text_protocol_type_returns_text_type() {
 
 void test06_create_binary_serializer_returns_binary_serializer() {
     ProtocolType type = ProtocolType::BINARY;
-    std::unique_ptr<Serializer> srl;
 
-    srl = Serializer::create(type);
+    auto srl = Serializer::create(type);
 
     assert(srl != nullptr);
     assert(typeid(*srl) == typeid(BinarySerializer));

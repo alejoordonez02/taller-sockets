@@ -1,6 +1,7 @@
 #include "common_protocol.h"
 
 #include <string>
+#include <vector>
 
 #include "common_command.h"
 #include "common_output.h"
@@ -38,7 +39,11 @@ int Protocol::recv(Output& output) { return 0; }
 /*
  * Send username
  * */
-int Protocol::send_username(const std::string& username) { return 0; }
+void Protocol::send_username(const std::string& username, Socket& skt) {
+    std::vector<uint8_t> srlzd_username = Serializer::serialize_username(username);
+    skt.sendall(srlzd_username.data(), srlzd_username.size());
+}
+
 int Protocol::recv_username(std::string& username) { return 0; }
 
 /*

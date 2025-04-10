@@ -44,7 +44,7 @@ public:
     /*
      * Send username
      * */
-    static int send_username(const std::string& username);
+    static void send_username(const std::string& username, Socket& skt);
     static int recv_username(std::string& username);
 
     /*

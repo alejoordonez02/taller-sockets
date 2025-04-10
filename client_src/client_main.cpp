@@ -2,6 +2,8 @@
 
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
+#include "../common_src/common_command.h"
+#include "../common_src/common_output.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 4) return -1;

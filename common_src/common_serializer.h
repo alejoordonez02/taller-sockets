@@ -36,8 +36,7 @@ public:
     /*
      * Username
      * */
-    static int serialize_username(std::vector<uint8_t>& srlzd_username,
-                                  const std::string& username);
+    static std::vector<uint8_t> serialize_username(const std::string& username);
 
     static int deserialize_username(std::string& dsrzld_username,
                                     const std::vector<uint8_t>& srlzd_username);

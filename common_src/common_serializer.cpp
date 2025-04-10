@@ -39,10 +39,9 @@ std::unique_ptr<Serializer> Serializer::create(const ProtocolType& type) {
 /*
  * Username
  * */
-int Serializer::serialize_username(std::vector<uint8_t>& srlzd_username,
-                                   const std::string& username) {
+std::vector<uint8_t> Serializer::serialize_username(const std::string& username) {
+    std::vector<uint8_t> srlzd_username;
 
-    srlzd_username.clear();
     srlzd_username.push_back(SRL_USERNAME);
 
     uint16_t len = static_cast<uint16_t>(username.length());
@@ -55,7 +54,7 @@ int Serializer::serialize_username(std::vector<uint8_t>& srlzd_username,
 
     srlzd_username.insert(srlzd_username.end(), username.begin(), username.end());
 
-    return 0;
+    return srlzd_username;
 }
 
 int Serializer::deserialize_username(std::string& dsrzld_username,

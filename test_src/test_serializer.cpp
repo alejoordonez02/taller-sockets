@@ -13,10 +13,8 @@ void test00_serialize_username_returns_expected_srl() {
     std::string username = "mate";
     std::vector<uint8_t> expected_srl = {0x01, 0x00, 0x04, 0x6d, 0x61, 0x74, 0x65};
 
-    std::vector<uint8_t> srl;
-    int ret = Serializer::serialize_username(srl, username);
+    std::vector<uint8_t> srl = Serializer::serialize_username(username);
 
-    assert(!ret);
     assert(srl == expected_srl);
 
     std::cout << "Passed 00!\n";

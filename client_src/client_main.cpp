@@ -24,10 +24,11 @@ int main(int argc, char* argv[]) {
 
     /*
      * Recibir el tipo de protocolo e
-     * instanciarlo
+     * instanciarlo, pasándole el
+     * ownership del socket
      * */
     ProtocolType protocol_type = Protocol::recv_protocol_type(skt);
-    Protocol protocol(protocol_type, skt);
+    Protocol protocol(protocol_type, std::move(skt));
 
     std::string scmd;
     while (getline(std::cin, scmd)) {

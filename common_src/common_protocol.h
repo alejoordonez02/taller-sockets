@@ -17,14 +17,9 @@ private:
 
 public:
     /*
-     * Server protocol
+     * Constructor
      * */
-    Protocol(const ProtocolType& type, const std::string& servname);
-
-    /*
-     * Client protocol
-     * */
-    Protocol(const ProtocolType& type, const std::string& hostname, const std::string& servname);
+    Protocol(const ProtocolType& type, Socket&& skt);
 
     /*
      * Commands

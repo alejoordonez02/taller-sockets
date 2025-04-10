@@ -9,17 +9,9 @@
 #include "common_socket.h"
 
 /*
- * Server
+ * Constructor
  * */
-Protocol::Protocol(const ProtocolType& type, const std::string& servname):
-        srl(Serializer::create(type)), skt(servname.c_str()) {}
-
-/*
- * Client
- * */
-Protocol::Protocol(const ProtocolType& type, const std::string& hostname,
-                   const std::string& servname):
-        srl(Serializer::create(type)), skt(hostname.c_str(), servname.c_str()) {}
+Protocol::Protocol(const ProtocolType& type, Socket&& skt) : skt(std::move(skt)) {};
 
 /*
  * Commands
@@ -44,7 +36,9 @@ void Protocol::send_username(const std::string& username, Socket& skt) {
     skt.sendall(srlzd_username.data(), srlzd_username.size());
 }
 
-int Protocol::recv_username(std::string& username) { return 0; }
+int Protocol::recv_username(std::string& username) {
+
+}
 
 /*
  * Send protocol type

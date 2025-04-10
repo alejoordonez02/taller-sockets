@@ -26,9 +26,14 @@ private:
 
     int serialize_weapon_name(std::vector<uint8_t>& srlzd, const WeaponName& weapon) const;
     int serialize_number(std::vector<uint8_t>& srlzd_cmd, const int& n) const;
+    int get_deserialized_number(const uint8_t& srlzd_n) const;
     int serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
     int serialize_ammo(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
     int serialize_equipment(std::vector<uint8_t>& srlzd_output, const Output& output) const;
+    int deserialize_buy(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const;
+    int deserialize_ammo(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const;
+    int deserialize_equipment(Output& dsrlzd_output,
+                              const std::vector<uint8_t>& srlzd_output) const;
 
 public:
     /*

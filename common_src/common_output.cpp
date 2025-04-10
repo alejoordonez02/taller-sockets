@@ -73,3 +73,21 @@ std::string Output::get_output() const {
 
     return output.str();
 }
+
+/*
+ * Operator==
+ * */
+bool Output::operator==(const Output& output) const {
+
+    if (type != output.type)
+        return false;
+
+    switch (type) {
+        case OutputType::EQUIPMENT:
+            return (money == output.money && knife == output.knife && primary == output.primary &&
+                    primary_ammo == output.primary_ammo && secondary == output.secondary &&
+                    secondary_ammo == output.secondary_ammo);
+        default:
+            return false;
+    }
+}

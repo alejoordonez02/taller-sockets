@@ -12,18 +12,19 @@ class Output {
 private:
     static const std::map<WeaponName, std::string> weapon_name_to_s;
 
-    const OutputType type;
-    const int money;
-    const bool knife;
-    const WeaponName primary;
-    const int primary_ammo;
-    const WeaponName secondary;
-    const int secondary_ammo;
+    OutputType type;
+    int money;
+    bool knife;
+    WeaponName primary;
+    int primary_ammo;
+    WeaponName secondary;
+    int secondary_ammo;
 
     std::string output_knife(bool knife) const;
     std::string output_weapon(WeaponName weapon, int ammo) const;
 
 public:
+    Output() = default;
     /*
      * Equipment
      * */
@@ -45,6 +46,11 @@ public:
      * Output string
      * */
     std::string get_output() const;
+
+    /*
+     * Operator==
+     * */
+    bool operator==(const Output& output) const;
 };
 
 #endif

@@ -27,6 +27,7 @@ private:
     static int get_count(const std::vector<std::string>& cmd_tkns);
 
 public:
+    Command() = default;
     /*
      * From string
      * */

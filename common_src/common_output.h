@@ -6,7 +6,7 @@
 
 #include "common_weapon_names.h"
 
-enum class OutputType { EQUIPMENT };
+enum class OutputType { NONE, SUCCESS, NEM_WEAPON, NEM_AMMO, EQUIPMENT };
 
 class Output {
 private:
@@ -22,9 +22,23 @@ private:
 
     std::string output_knife(bool knife) const;
     std::string output_weapon(WeaponName weapon, int ammo) const;
+    std::string get_output_equipment() const;
+    std::string get_output_success() const;
+    std::string get_output_nem_weapon() const;
+    std::string get_output_nem_ammo() const;
 
 public:
-    Output() = default;
+    /*
+     * None
+     * */
+    Output();
+
+    /*
+     * Success and not enough
+     * money outputs
+     * */
+    Output(const OutputType& type);
+
     /*
      * Equipment
      * */
@@ -46,6 +60,11 @@ public:
      * Output string
      * */
     std::string get_output() const;
+
+    /*
+     * Username
+     * */
+    static std::string get_username_output(const std::string& username);
 
     /*
      * Operator==

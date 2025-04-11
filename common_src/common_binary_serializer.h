@@ -24,16 +24,15 @@ private:
     void initialize_weapon_name_maps();
     void initialize_weapon_type_maps();
 
-    int serialize_weapon_name(std::vector<uint8_t>& srlzd, const WeaponName& weapon) const;
-    int serialize_number(std::vector<uint8_t>& srlzd_cmd, const int& n) const;
+    void serialize_weapon_name(std::vector<uint8_t>& srlzd, const WeaponName& weapon) const;
+    void serialize_number(std::vector<uint8_t>& srlzd_cmd, const int& n) const;
     int get_deserialized_number(const uint8_t& srlzd_n) const;
-    int serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
-    int serialize_ammo(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
-    int serialize_equipment(std::vector<uint8_t>& srlzd_output, const Output& output) const;
-    int deserialize_buy(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const;
-    int deserialize_ammo(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const;
-    int deserialize_equipment(Output& dsrlzd_output,
-                              const std::vector<uint8_t>& srlzd_output) const;
+    void serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
+    void serialize_ammo(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const;
+    void serialize_equipment(std::vector<uint8_t>& srlzd_output, const Output& output) const;
+    Command deserialize_buy(const std::vector<uint8_t>& srlzd_cmd) const;
+    Command deserialize_ammo(const std::vector<uint8_t>& srlzd_cmd) const;
+    Output deserialize_equipment(const std::vector<uint8_t>& srlzd_output) const;
 
 public:
     /*
@@ -44,14 +43,16 @@ public:
     /*
      * Commands
      * */
-    int serialize(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const override;
-    int deserialize(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const override;
+    CommandType get_deserialized_command_type(const std::vector<uint8_t>& srlzd_cmd) const;
+    std::vector<uint8_t> serialize(const Command& cmd) const override;
+    Command deserialize_command(const std::vector<uint8_t>& srlzd_cmd) const override;
 
     /*
      * Outputs
      * */
-    int serialize(std::vector<uint8_t>& srlzd_output, const Output& output) const override;
-    int deserialize(Output& dsrlzd_output, const std::vector<uint8_t>& srlzd_output) const override;
+    OutputType get_deserialized_output_type(const std::vector<uint8_t>& srlzd_output) const;
+    std::vector<uint8_t> serialize(const Output& output) const override;
+    Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const override;
 
     /*
      * Destructor

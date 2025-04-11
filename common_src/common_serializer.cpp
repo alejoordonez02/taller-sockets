@@ -23,20 +23,6 @@
  * Static methods
  * */
 /*
- * Factory
- * */
-std::unique_ptr<Serializer> Serializer::create(const ProtocolType& type) {
-    switch (type) {
-        case ProtocolType::BINARY:
-            return std::make_unique<BinarySerializer>();
-        case ProtocolType::TEXT:
-            return std::make_unique<TextSerializer>();
-        default:
-            return nullptr;
-    }
-}
-
-/*
  * Username
  * */
 std::vector<uint8_t> Serializer::serialize_username(const std::string& username) {

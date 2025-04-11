@@ -15,24 +15,18 @@ public:
     /*
      * Commands
      * */
-    virtual int serialize(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const = 0;
-    virtual int deserialize(Command& dsrlzd_cmd, const std::vector<uint8_t>& srlzd_cmd) const = 0;
+    virtual std::vector<uint8_t> serialize(const Command& cmd) const = 0;
+    virtual Command deserialize_command(const std::vector<uint8_t>& srlzd_cmd) const = 0;
 
     /*
      * Outputs
      * */
-    virtual int serialize(std::vector<uint8_t>& srlzd_output, const Output& output) const = 0;
-    virtual int deserialize(Output& dsrlzd_output,
-                            const std::vector<uint8_t>& srlzd_output) const = 0;
+    virtual std::vector<uint8_t> serialize(const Output& output) const = 0;
+    virtual Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const = 0;
 
     /*
      * Static methods
      * */
-    /*
-     * Factory
-     * */
-    static std::unique_ptr<Serializer> create(const ProtocolType& type);
-
     /*
      * Username
      * */

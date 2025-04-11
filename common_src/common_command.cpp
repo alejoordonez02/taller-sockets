@@ -24,6 +24,15 @@ const std::map<std::string, WeaponType> Command::s_to_weapon_type = {
  * Constructor
  * */
 /*
+ * Empty: Type NONE
+ * */
+Command::Command():
+        type(CommandType::NONE),
+        weapon_name(WeaponName::NONE),
+        weapon_type(WeaponType::NONE),
+        count(0) {}
+
+/*
  * From string
  * */
 CommandType Command::get_type(const std::vector<std::string>& cmd_tkns) {
@@ -53,8 +62,8 @@ Command::Command(const std::string& s_cmd) {
         case CommandType::AMMO: {
             *this = Command(cmd_type, get_weapon_type(cmd_tkns), get_count(cmd_tkns));
             break;
-        case CommandType::NONE:
-            break;
+            case CommandType::NONE:
+                break;
         }
     }
 }

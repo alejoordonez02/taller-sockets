@@ -1,10 +1,14 @@
 #include "common_protocol.h"
 
+#include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <arpa/inet.h>
 
+#include "common_binary_protocol.h"
+// #include "common_text_protocol.h"
 #include "common_command.h"
 #include "common_output.h"
 #include "common_serializer.h"
@@ -15,21 +19,18 @@
 #define PROTOCOL_TYPE_SIZE 2
 
 /*
- * Constructor
+ * Facotry
  * */
-Protocol::Protocol(const ProtocolType& type, Socket&& skt) : skt(std::move(skt)) {};
-
-/*
- * Commands
- * */
-int Protocol::send(const Command& cmd) { return 0; }
-int Protocol::recv(Command& cmd) { return 0; }
-
-/*
- * Outputs
- * */
-int Protocol::send(const Output& output) { return 0; }
-int Protocol::recv(Output& output) { return 0; }
+std::unique_ptr<Protocol> Protocol::create(const ProtocolType& type, Socket&& skt) {
+    switch (type) {
+        case ProtocolType::BINARY:
+            return std::make_unique<BinaryProtocol>(std::move(skt));
+        // case ProtocolType::TEXT:
+        //     return std::make_unique<TextProtocol(std::move(skt))>;
+        default:
+            return nullptr;
+    }
+}
 
 /*
  * Static methods
@@ -52,7 +53,7 @@ std::string Protocol::recv_username(Socket& skt) {
      * del username
      * */
     while (r < USERNAME_HEADER_SIZE)
-        r += skt.recvsome(srlzd_username.data(), srlzd_username.size());
+        r += skt.recvsome(srlzd_username.data() + r, srlzd_username.size() - r);
 
     uint16_t* srlzd_len = reinterpret_cast<uint16_t*>(&srlzd_username[1]);
     int len = ntohs(*srlzd_len);
@@ -62,8 +63,10 @@ std::string Protocol::recv_username(Socket& skt) {
      * bytes, si no llego todo con el recvsome,
      * hago recvall de los restantes
      * */
-    if (r < len + USERNAME_HEADER_SIZE)
-        skt.recvall(srlzd_username.data() + r, len + USERNAME_HEADER_SIZE - r);
+    int pending = len + USERNAME_HEADER_SIZE - r;
+
+    if (pending)
+        skt.recvall(srlzd_username.data() + r, pending);
 
     std::string username = Serializer::deserialize_username(srlzd_username);
 

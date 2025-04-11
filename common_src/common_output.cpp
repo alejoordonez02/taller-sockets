@@ -12,6 +12,24 @@ const std::map<WeaponName, std::string> Output::weapon_name_to_s = {
         {WeaponName::AWP, "awp"}};
 
 /*
+ * Empty
+ * */
+Output::Output():
+        type(OutputType::NONE),
+        money(0),
+        knife(false),
+        primary(WeaponName::NONE),
+        primary_ammo(0),
+        secondary(WeaponName::NONE),
+        secondary_ammo(0) {}
+
+/*
+ * Success and not enough
+ * money outputs
+ * */
+Output::Output(const OutputType& type): type(type) {}
+
+/*
  * Equipment constructor
  * */
 Output::Output(const OutputType& type, const int& money, const bool& knife,
@@ -47,7 +65,7 @@ int Output::get_secondary_ammo() const { return secondary_ammo; }
  * Output string
  * */
 std::string Output::output_knife(bool knife) const {
-    std::string output = (knife ? "equipped" : "not equipped");
+    std::string output = (knife ? "equipped" : "not_equipped");
 
     return output;
 }
@@ -57,19 +75,54 @@ std::string Output::output_weapon(WeaponName weapon, int ammo) const {
     std::stringstream output;
 
     if (weapon == WeaponName::NONE)
-        output << "not equipped";
+        output << "not_equipped";
     else
         output << weapon_name_to_s.at(weapon) << ", " << ammo;
 
     return output.str();
 }
 
-std::string Output::get_output() const {
+std::string Output::get_output_equipment() const {
     std::stringstream output;
 
     output << "money: $" << money << " | knife: " << output_knife(knife)
            << " | primary: " << output_weapon(primary, primary_ammo)
            << " | secondary: " << output_weapon(secondary, secondary_ammo) << std::endl;
+
+    return output.str();
+}
+
+std::string Output::get_output_success() const { return std::string(); }
+
+std::string Output::get_output_nem_weapon() const {
+    return std::string("Not enough money to buy weapon\n");
+}
+
+std::string Output::get_output_nem_ammo() const {
+    return std::string("Not enough money to buy ammo\n");
+}
+
+std::string Output::get_output() const {
+    switch (type) {
+        case OutputType::EQUIPMENT:
+            return get_output_equipment();
+        case OutputType::SUCCESS:
+            return get_output_success();
+        case OutputType::NEM_WEAPON:
+            return get_output_nem_weapon();
+        case OutputType::NEM_AMMO:
+            return get_output_nem_ammo();
+        default:
+            return std::string();
+    }
+}
+
+/*
+ * Username
+ * */
+std::string Output::get_username_output(const std::string& username) {
+    std::stringstream output;
+    output << username << " has arrived!" << std::endl;
 
     return output.str();
 }

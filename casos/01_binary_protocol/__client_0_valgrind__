@@ -1,0 +1,17 @@
+==00:00:00:00.000 169587== Memcheck, a memory error detector
+==00:00:00:00.000 169587== Copyright (C) 2002-2024, and GNU GPL'd, by Julian Seward et al.
+==00:00:00:00.000 169587== Using Valgrind-3.24.0 and LibVEX; rerun with -h for copyright info
+==00:00:00:00.000 169587== Command: ./client 127.0.0.1 1501 mate
+==00:00:00:00.000 169587== Parent PID: 169585
+==00:00:00:00.000 169587== 
+==00:00:00:01.158 169587== 
+==00:00:00:01.158 169587== FILE DESCRIPTORS: 3 open (3 std) at exit.
+==00:00:00:01.158 169587== 
+==00:00:00:01.158 169587== HEAP SUMMARY:
+==00:00:00:01.158 169587==     in use at exit: 0 bytes in 0 blocks
+==00:00:00:01.158 169587==   total heap usage: 131 allocs, 131 frees, 92,232 bytes allocated
+==00:00:00:01.158 169587== 
+==00:00:00:01.158 169587== All heap blocks were freed -- no leaks are possible
+==00:00:00:01.158 169587== 
+==00:00:00:01.158 169587== For lists of detected and suppressed errors, rerun with: -s
+==00:00:00:01.158 169587== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)

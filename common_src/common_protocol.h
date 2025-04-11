@@ -11,31 +11,30 @@
 #include "common_socket.h"
 
 class Protocol {
-private:
-    std::unique_ptr<Serializer> srl;
-    Socket skt;
-
 public:
     /*
-     * Constructor
+     * Virtual methods
      * */
-    Protocol(const ProtocolType& type, Socket&& skt);
-
     /*
      * Commands
      * */
-    int send(const Command& cmd);
-    int recv(Command& cmd);
+    virtual bool send(const Command& cmd) = 0;
+    virtual Command recv_command() = 0;
 
     /*
      * Outputs
      * */
-    int send(const Output& output);
-    int recv(Output& output);
+    virtual bool send(const Output& output) = 0;
+    virtual Output recv_output() = 0;
 
     /*
      * Static methods
      * */
+    /*
+     * Factory
+     * */
+    static std::unique_ptr<Protocol> create(const ProtocolType& type, Socket&& skt);
+
     /*
      * Send username
      * */
@@ -47,6 +46,11 @@ public:
      * */
     static void send_protocol_type(const ProtocolType& type, Socket& skt);
     static ProtocolType recv_protocol_type(Socket& skt);
+
+    /*
+     * Destructor
+     * */
+    virtual ~Protocol() = default;
 };
 
 #endif

@@ -29,25 +29,27 @@ int main(int argc, char* argv[]) {
      * ownership del socket
      * */
     ProtocolType protocol_type = Protocol::recv_protocol_type(skt);
+    std::unique_ptr<Protocol> protocol = Protocol::create(protocol_type, std::move(skt));
 
-    if (protocol_type == ProtocolType::BINARY)
-      std::cout << "binary!\n";
-
-    Protocol protocol(protocol_type, std::move(skt));
+    /*
+     * Recibir equipmamiento inicial
+     * */
+    Output equipment = protocol->recv_output();
+    std::cout << equipment.get_output();
 
     std::string scmd;
-    while (getline(std::cin, scmd)) {
+    while (getline(std::cin, scmd) && scmd != "exit") {
     /*
      * Enviar comandos
      * */
         Command cmd(scmd);
-        protocol.send(cmd);
+        protocol->send(cmd);
 
     /*
      * Recibir salidas e imprimirlas
      * */
-        // Output output = protocol.receive_output();
-        // output.output();
+        Output equipment = protocol->recv_output();
+        std::cout << equipment.get_output();
     }
 
     return 0;

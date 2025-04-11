@@ -38,16 +38,14 @@ public:
      * */
     static std::vector<uint8_t> serialize_username(const std::string& username);
 
-    static int deserialize_username(std::string& dsrzld_username,
-                                    const std::vector<uint8_t>& srlzd_username);
+    static std::string deserialize_username(const std::vector<uint8_t>& srlzd_username);
 
     /*
      * Protocol type
      * */
-    static int serialize_protocol_type(std::vector<uint8_t>& srlzd_type, const ProtocolType& type);
+    static std::vector<uint8_t> serialize_protocol_type(const ProtocolType& type);
 
-    static int deserialize_protocol_type(ProtocolType& dsrlzd_type,
-                                         const std::vector<uint8_t>& srlzd_type);
+    static ProtocolType deserialize_protocol_type(const std::vector<uint8_t>& srlzd_type);
 
     /*
      * Destructor

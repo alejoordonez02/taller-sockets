@@ -53,6 +53,8 @@ Command::Command(const std::string& s_cmd) {
         case CommandType::AMMO: {
             *this = Command(cmd_type, get_weapon_type(cmd_tkns), get_count(cmd_tkns));
             break;
+        case CommandType::NONE:
+            break;
         }
     }
 }

@@ -1,3 +1,8 @@
+#include <iostream>
+#include <string>
+
+#include "../common_src/common_socket.h"
+#include "../common_src/common_protocol.h"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) return -1;
@@ -15,6 +20,7 @@ int main(int argc, char* argv[]) {
      * Recibir el username
      * */
     std::string username = Protocol::recv_username(skt);
+    std::cout << "username: " << username;
 
     /*
      * Enviar el tipo de protocolo

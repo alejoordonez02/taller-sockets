@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 
 #include "../common_src/common_socket.h"
@@ -15,7 +16,7 @@ int main(int argc, char* argv[]) {
     /*
      * Skt al server
      * */
-    Socket skt(servname);
+    Socket skt(hostname.c_str(), servname.c_str());
 
     /*
      * Enviar el username
@@ -28,6 +29,10 @@ int main(int argc, char* argv[]) {
      * ownership del socket
      * */
     ProtocolType protocol_type = Protocol::recv_protocol_type(skt);
+
+    if (protocol_type == ProtocolType::BINARY)
+      std::cout << "binary!\n";
+
     Protocol protocol(protocol_type, std::move(skt));
 
     std::string scmd;
@@ -41,8 +46,8 @@ int main(int argc, char* argv[]) {
     /*
      * Recibir salidas e imprimirlas
      * */
-        Output output = protocol.receive_output();
-        output.output();
+        // Output output = protocol.receive_output();
+        // output.output();
     }
 
     return 0;

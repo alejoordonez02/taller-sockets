@@ -40,13 +40,13 @@ public:
      * Send username
      * */
     static void send_username(const std::string& username, Socket& skt);
-    static int recv_username(std::string& username);
+    static std::string recv_username(Socket& skt);
 
     /*
      * Send protocol type
      * */
-    static int send_type(const ProtocolType& type);
-    static int recv_type(ProtocolType& type);
+    static void send_protocol_type(const ProtocolType& type, Socket& skt);
+    static ProtocolType recv_protocol_type(Socket& skt);
 };
 
 #endif

@@ -57,64 +57,46 @@ std::vector<uint8_t> Serializer::serialize_username(const std::string& username)
     return srlzd_username;
 }
 
-int Serializer::deserialize_username(std::string& dsrzld_username,
-                                     const std::vector<uint8_t>& srlzd_username) {
+std::string Serializer::deserialize_username(const std::vector<uint8_t>& srlzd_username) {
 
     const uint16_t* srlzd_len = reinterpret_cast<const uint16_t*>(&srlzd_username[1]);
     uint16_t len = ntohs(*srlzd_len);
 
-    dsrzld_username = std::string(reinterpret_cast<const char*>(&srlzd_username[3]), len);
+    std::string dsrzld_username(reinterpret_cast<const char*>(&srlzd_username[3]), len);
 
-    return 0;
+    return dsrzld_username;
 }
 
 /*
  * Protocol type
  * */
-int Serializer::serialize_protocol_type(std::vector<uint8_t>& srlzd_type,
-                                        const ProtocolType& type) {
+std::vector<uint8_t> Serializer::serialize_protocol_type(const ProtocolType& type) {
+    std::vector<uint8_t> srlzd_type;
 
-    int ret;
-
-    srlzd_type.clear();
     srlzd_type.push_back(SRL_PROTOCOL_TYPE);
 
     switch (type) {
         case ProtocolType::BINARY:
             srlzd_type.push_back(SRL_BINARY);
-            ret = 0;
             break;
         case ProtocolType::TEXT:
             srlzd_type.push_back(SRL_TEXT);
-            ret = 0;
             break;
         default:
-            ret = -1;
             break;
     }
 
-    return ret;
+    return srlzd_type;
 }
 
 
-int Serializer::deserialize_protocol_type(ProtocolType& dsrlzd_type,
-                                          const std::vector<uint8_t>& srlzd_type) {
-
-    int ret;
-
+ProtocolType Serializer::deserialize_protocol_type(const std::vector<uint8_t>& srlzd_type) {
     switch (srlzd_type[1]) {
         case SRL_BINARY:
-            dsrlzd_type = ProtocolType::BINARY;
-            ret = 0;
-            break;
+            return ProtocolType::BINARY;
         case SRL_TEXT:
-            dsrlzd_type = ProtocolType::TEXT;
-            ret = 0;
-            break;
+            return ProtocolType::TEXT;
         default:
-            ret = -1;
-            break;
+            return ProtocolType::NONE;
     }
-
-    return ret;
 }

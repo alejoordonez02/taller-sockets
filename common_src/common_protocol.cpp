@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 
 #include "common_binary_protocol.h"
-// #include "common_text_protocol.h"
+#include "common_text_protocol.h"
 #include "common_command.h"
 #include "common_output.h"
 #include "common_serializer.h"
@@ -25,8 +25,8 @@ std::unique_ptr<Protocol> Protocol::create(const ProtocolType& type, Socket&& sk
     switch (type) {
         case ProtocolType::BINARY:
             return std::make_unique<BinaryProtocol>(std::move(skt));
-        // case ProtocolType::TEXT:
-        //     return std::make_unique<TextProtocol(std::move(skt))>;
+        case ProtocolType::TEXT:
+            return std::make_unique<TextProtocol>(std::move(skt));
         default:
             return nullptr;
     }

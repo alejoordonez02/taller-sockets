@@ -44,15 +44,15 @@ public:
      * Commands
      * */
     CommandType get_deserialized_command_type(const std::vector<uint8_t>& srlzd_cmd) const;
-    std::vector<uint8_t> serialize(const Command& cmd) const override;
-    Command deserialize_command(const std::vector<uint8_t>& srlzd_cmd) const override;
+    std::vector<uint8_t> serialize(const Command& cmd) const;
+    Command deserialize_command(const std::vector<uint8_t>& srlzd_cmd) const;
 
     /*
      * Outputs
      * */
     OutputType get_deserialized_output_type(const std::vector<uint8_t>& srlzd_output) const;
-    std::vector<uint8_t> serialize(const Output& output) const override;
-    Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const override;
+    std::vector<uint8_t> serialize(const Output& output) const;
+    Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const;
 
     /*
      * Destructor

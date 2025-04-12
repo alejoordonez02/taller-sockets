@@ -1,97 +1,90 @@
 #include "common_protocol.h"
-#include "common_binary_protocol.h"
-#include "common_text_protocol.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <cstdint>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include <arpa/inet.h>
 
-#define USERNAME_MSG 0x01
-#define PROTOCOL_TYPE_MSG 0x06
+#include "common_binary_protocol.h"
+#include "common_text_protocol.h"
+#include "common_command.h"
+#include "common_output.h"
+#include "common_serializer.h"
+#include "common_socket.h"
 
-#define PROTOCOL_TYPE_BINARY 0x07
-#define PROTOCOL_TYPE_TEXT 0x08
+#define MAX_BUF 32
+#define USERNAME_HEADER_SIZE 3
+#define PROTOCOL_TYPE_SIZE 2
 
-std::unique_ptr<Protocol> Protocol::create(
-    const ProtocolType &prtcl_t) {
-
-    if (prtcl_t == ProtocolType::BINARY)
-        return std::make_unique<BinaryProtocol>();
-    else if (prtcl_t == ProtocolType::TEXT)
-        return std::make_unique<TextProtocol>();
-
-    return nullptr;
+/*
+ * Facotry
+ * */
+std::unique_ptr<Protocol> Protocol::create(const ProtocolType& type, Socket&& skt) {
+    switch (type) {
+        case ProtocolType::BINARY:
+            return std::make_unique<BinaryProtocol>(std::move(skt));
+        case ProtocolType::TEXT:
+            return std::make_unique<TextProtocol>(std::move(skt));
+        default:
+            return nullptr;
+    }
 }
 
-int Protocol::srlz_username(
-    std::vector<uint8_t> &srlzd_username,
-    const std::string &username) {
-
-    srlzd_username.clear();
-
-    uint16_t len = static_cast<uint16_t>(username.size());
-    len = htons(len);
-    uint8_t *len_ptr = reinterpret_cast<uint8_t *>(&len);
-
-    srlzd_username.push_back(USERNAME_MSG);
-    srlzd_username.insert(
-        srlzd_username.end(), len_ptr, len_ptr + sizeof(uint16_t));
-    srlzd_username.insert(
-        srlzd_username.end(), username.begin(), username.end());
-
-    return 0;
+/*
+ * Static methods
+ * */
+/*
+ * Send username
+ * */
+void Protocol::send_username(const std::string& username, Socket& skt) {
+    std::vector<uint8_t> srlzd_username = Serializer::serialize_username(username);
+    skt.sendall(srlzd_username.data(), srlzd_username.size());
 }
 
-int Protocol::srlz_prtcl_t(
-    std::vector<uint8_t> &srlzd_prtcl_t,
-    const std::string &prtcl_t) {
+std::string Protocol::recv_username(Socket& skt) {
+    std::vector<uint8_t> srlzd_username(MAX_BUF);
 
-    srlzd_prtcl_t.clear();
+    int r = 0;
 
-    srlzd_prtcl_t.push_back(PROTOCOL_TYPE_MSG);
+    /*
+     * Me aseguro de haber recibido el length
+     * del username
+     * */
+    while (r < USERNAME_HEADER_SIZE)
+        r += skt.recvsome(srlzd_username.data() + r, srlzd_username.size() - r);
 
-    if (prtcl_t == "binary")
-        srlzd_prtcl_t.push_back(PROTOCOL_TYPE_BINARY);
-    else if (prtcl_t == "text")
-        srlzd_prtcl_t.push_back(PROTOCOL_TYPE_TEXT);
-    else
-        return -1;
+    uint16_t* srlzd_len = reinterpret_cast<uint16_t*>(&srlzd_username[1]);
+    int len = ntohs(*srlzd_len);
 
-    return 0;
+    /*
+     * Ahora que ya sé la cantidad total de
+     * bytes, si no llego todo con el recvsome,
+     * hago recvall de los restantes
+     * */
+    int pending = len + USERNAME_HEADER_SIZE - r;
+
+    if (pending)
+        skt.recvall(srlzd_username.data() + r, pending);
+
+    std::string username = Serializer::deserialize_username(srlzd_username);
+
+    return username;
 }
 
-int Protocol::dsrlz_prtcl_t(
-    ProtocolType *prtcl_t,
-    const char *srlzd_prtcl_t) {
-
-    if (srlzd_prtcl_t[0] != PROTOCOL_TYPE_MSG)
-        return -1;
-
-    if (srlzd_prtcl_t[1] == PROTOCOL_TYPE_BINARY)
-        *prtcl_t = ProtocolType::BINARY;
-    else if (srlzd_prtcl_t[1] == PROTOCOL_TYPE_TEXT)
-        *prtcl_t = ProtocolType::TEXT;
-    else
-        return -1;
-
-    return 0;
+/*
+ * Send protocol type
+ * */
+void Protocol::send_protocol_type(const ProtocolType& type, Socket& skt) {
+    std::vector<uint8_t> srlzd_protocol_type = Serializer::serialize_protocol_type(type);
+    skt.sendall(srlzd_protocol_type.data(), srlzd_protocol_type.size());
 }
 
-int Protocol::dsrlz_username(
-    std::string &username,
-    const char *srlzd_username) {
+ProtocolType Protocol::recv_protocol_type(Socket& skt) {
+    std::vector<uint8_t> srlzd_protocol_type(PROTOCOL_TYPE_SIZE);
+    skt.recvall(srlzd_protocol_type.data(), srlzd_protocol_type.size());
+    ProtocolType dsrlzd_protocol_type = Serializer::deserialize_protocol_type(srlzd_protocol_type);
 
-    if (srlzd_username[0] != USERNAME_MSG)
-        return -1;
-
-    const uint16_t *srlzd_len = reinterpret_cast<const uint16_t *>(srlzd_username + 1);
-    uint16_t len = ntohs(*srlzd_len);
-
-    username = std::string (srlzd_username + 3, len);
-
-    return 0;
+    return dsrlzd_protocol_type;
 }

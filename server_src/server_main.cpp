@@ -1,100 +1,74 @@
 #include <iostream>
-#include <cstdint>
 #include <string>
-#include <exception>
 
 #include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
-#include "../common_src/common_command.h"
 #include "server_command_processor.h"
-
-#define PROTOCOL_TYPE_BINARY "binary"
-#define PROTOCOL_TYPE_TEXT "text"
-
-#define BUF_SIZE 512
+#include "server_player.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 3)
-        return -1;
+    if (argc != 3) return -1;
 
     const std::string servname = argv[1];
-    const std::string prtcl_t_s = argv[2];
-
-    int ret = 0;
-
-    Socket skt(servname.c_str());
-    Socket clt = skt.accept();
+    const std::string sprotocol_type = argv[2];
 
     /*
-     * recibir el username
-     ***/
-    char srlzd_username[BUF_SIZE];
-    clt.recvsome(srlzd_username, sizeof(srlzd_username));
-
-    std::string username;
-    ret = Protocol::dsrlz_username(username, srlzd_username);
-
-    std::cout << username << " has arrived!\n";
+     * Skt al cliente
+     * */
+    Socket tmp(servname.c_str());
+    Socket skt = tmp.accept();
 
     /*
-     * enviar el tipo de
-     * protocolo
-     ***/
-    std::vector<uint8_t> srlzd_prtcl_t;
-    ret = Protocol::srlz_prtcl_t(srlzd_prtcl_t, prtcl_t_s);
-
-    clt.sendall(srlzd_prtcl_t.data(), srlzd_prtcl_t.size());
+     * Recibir el username
+     * */
+    std::string username = Protocol::recv_username(skt);
+    std::cout << Output::get_username_output(username);
 
     /*
-     * instanciar el
-     * protocolo
-     ***/
-    ProtocolType prtcl_t;
-    if (prtcl_t_s == PROTOCOL_TYPE_BINARY)
-        prtcl_t = ProtocolType::BINARY;
-    else if (prtcl_t_s == PROTOCOL_TYPE_TEXT)
-        prtcl_t = ProtocolType::TEXT;
-    else
-        return -1;
+     * Enviar el tipo de protocolo
+     * */
+    ProtocolType protocol_type;
 
-    auto prtcl = Protocol::create(prtcl_t);
+    if (sprotocol_type == "binary")
+        protocol_type = ProtocolType::BINARY;
+    else if(sprotocol_type == "text")
+        protocol_type = ProtocolType::TEXT;
+    else return -1;
+
+    Protocol::send_protocol_type(protocol_type, skt);
 
     /*
-     * instanciar el
-     * player
-     ***/
+     * Instanciar el protocolo,
+     * delegándole el ownership
+     * del socket
+     * */
+    std::unique_ptr<Protocol> protocol = Protocol::create(protocol_type, std::move(skt));
+
+    /*
+     * Instanciar el jugador y el
+     * procesador de comandos
+     * */
     Player player(username);
+    CommandProcessor processor(std::move(player));
 
     /*
-     * instanciar el
-     * procesador
-     ***/
-    CommandProcessor processor(player);
+     * Recibir los comandos del
+     * cliente y procesarlos
+     * */
+    Command cmd;
+    do {
+        Output equipment = processor.get_equipment();
+        if(!protocol->send(equipment))
+            break;
 
-    /*
-     * escuchar al server
-     * y actualizar el modelo
-     ***/
-    while (true) {
-        char cmd_buf[BUF_SIZE];
+        cmd = protocol->recv_command();
+        Output output = processor.process(cmd);
+        if (output.get_type() == OutputType::NONE)
+            break;
 
-        clt.recvsome(cmd_buf, sizeof(cmd_buf));
-        if (clt.is_stream_recv_closed())
-            return ret;
+        std::cout << output.get_output();
 
-        Command cmd;
-        ret = prtcl->dsrlz_cmd(cmd, cmd_buf);
+    } while (!(cmd.get_type() == CommandType::NONE));
 
-        Command equipment;
-        ret = processor.process(equipment, cmd);
-
-        std::vector<uint8_t> srlzd_equipment;
-        ret = prtcl->srlz_cmd(srlzd_equipment, equipment);
-
-        clt.sendall(srlzd_equipment.data(), srlzd_equipment.size());
-        if (clt.is_stream_send_closed())
-            return ret;
-    }
-
-    return ret;
+    return 0;
 }

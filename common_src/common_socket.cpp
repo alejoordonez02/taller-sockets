@@ -5,31 +5,29 @@
  *
  * De acuerdo con la GPL v2, este código se mantiene bajo la misma licencia.
  */
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <errno.h>
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-
 #include "common_socket.h"
-#include "common_resolver.h"
-#include "common_liberror.h"
 
 #include <stdexcept>
+
+#include <arpa/inet.h>
+#include <assert.h>
+#include <errno.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include "common_liberror.h"
+#include "common_resolver.h"
 
 #define STREAM_SEND_CLOSED 0x01
 #define STREAM_RECV_CLOSED 0x02
 #define STREAM_BOTH_CLOSED 0x03
 #define STREAM_BOTH_OPEN 0x00
 
-Socket::Socket(
-        const char *hostname,
-        const char *servname) {
+Socket::Socket(const char* hostname, const char* servname) {
     Resolver resolver(hostname, servname, false);
 
     int s = -1;
@@ -38,7 +36,7 @@ Socket::Socket(
     this->stream_status = STREAM_BOTH_CLOSED;
 
     while (resolver.has_next()) {
-        struct addrinfo *addr = resolver.next();
+        struct addrinfo* addr = resolver.next();
 
         if (skt != -1)
             ::close(skt);
@@ -64,14 +62,11 @@ Socket::Socket(
     if (skt != -1)
         ::close(skt);
 
-    throw LibError(
-            saved_errno,
-            "socket construction failed (connect to %s:%s)",
-            (hostname ? hostname : ""),
-            (servname ? servname : ""));
+    throw LibError(saved_errno, "socket construction failed (connect to %s:%s)",
+                   (hostname ? hostname : ""), (servname ? servname : ""));
 }
 
-Socket::Socket(const char *servname) {
+Socket::Socket(const char* servname) {
     Resolver resolver(nullptr, servname, true);
 
     int s = -1;
@@ -79,7 +74,7 @@ Socket::Socket(const char *servname) {
     this->closed = true;
     this->stream_status = STREAM_BOTH_CLOSED;
     while (resolver.has_next()) {
-        struct addrinfo *addr = resolver.next();
+        struct addrinfo* addr = resolver.next();
 
         if (skt != -1)
             ::close(skt);
@@ -116,10 +111,8 @@ Socket::Socket(const char *servname) {
     if (skt != -1)
         ::close(skt);
 
-    throw LibError(
-            saved_errno,
-            "socket construction failed (listen on %s)",
-            (servname ? servname : ""));
+    throw LibError(saved_errno, "socket construction failed (listen on %s)",
+                   (servname ? servname : ""));
 }
 
 Socket::Socket(Socket&& other) {
@@ -150,10 +143,7 @@ Socket& Socket::operator=(Socket&& other) {
     return *this;
 }
 
-int Socket::recvsome(
-        void *data,
-        unsigned int sz
-    ) {
+int Socket::recvsome(void* data, unsigned int sz) {
     chk_skt_or_fail();
     int s = recv(this->skt, (char*)data, sz, 0);
     if (s == 0) {
@@ -166,10 +156,7 @@ int Socket::recvsome(
     }
 }
 
-int Socket::sendsome(
-        const void *data,
-        unsigned int sz
-    ) {
+int Socket::sendsome(const void* data, unsigned int sz) {
     chk_skt_or_fail();
     int s = send(this->skt, (char*)data, sz, MSG_NOSIGNAL);
     if (s == -1) {
@@ -187,25 +174,16 @@ int Socket::sendsome(
     }
 }
 
-int Socket::recvall(
-        void *data,
-        unsigned int sz
-    ) {
+int Socket::recvall(void* data, unsigned int sz) {
     unsigned int received = 0;
 
     while (received < sz) {
-        int s = recvsome(
-                (char*)data + received,
-                sz - received);
+        int s = recvsome((char*)data + received, sz - received);
 
         if (s <= 0) {
             assert(s == 0);
             if (received)
-                throw LibError(
-                        EPIPE,
-                        "socket received only %d of %d bytes",
-                        received,
-                        sz);
+                throw LibError(EPIPE, "socket received only %d of %d bytes", received, sz);
             else
                 return 0;
         } else {
@@ -217,25 +195,16 @@ int Socket::recvall(
 }
 
 
-int Socket::sendall(
-        const void *data,
-        unsigned int sz
-    ) {
+int Socket::sendall(const void* data, unsigned int sz) {
     unsigned int sent = 0;
 
     while (sent < sz) {
-        int s = sendsome(
-                (char*)data + sent,
-                sz - sent);
+        int s = sendsome((char*)data + sent, sz - sent);
 
         if (s <= 0) {
             assert(s == 0);
             if (sent)
-                throw LibError(
-                        EPIPE,
-                        "socket sent only %d of %d bytes",
-                        sent,
-                        sz);
+                throw LibError(EPIPE, "socket sent only %d of %d bytes", sent, sz);
             else
                 return 0;
         } else {
@@ -282,13 +251,9 @@ void Socket::shutdown(int how) {
     }
 }
 
-bool Socket::is_stream_send_closed() const {
-    return stream_status & STREAM_SEND_CLOSED;
-}
+bool Socket::is_stream_send_closed() const { return stream_status & STREAM_SEND_CLOSED; }
 
-bool Socket::is_stream_recv_closed() const {
-    return stream_status & STREAM_RECV_CLOSED;
-}
+bool Socket::is_stream_recv_closed() const { return stream_status & STREAM_RECV_CLOSED; }
 
 int Socket::close() {
     chk_skt_or_fail();
@@ -306,10 +271,8 @@ Socket::~Socket() {
 
 void Socket::chk_skt_or_fail() const {
     if (skt == -1) {
-        throw std::runtime_error(
-                "socket with invalid file descriptor (-1), "
-                "perhaps you are using a *previously moved* "
-                "socket (and therefore invalid)."
-                );
+        throw std::runtime_error("socket with invalid file descriptor (-1), "
+                                 "perhaps you are using a *previously moved* "
+                                 "socket (and therefore invalid).");
     }
 }

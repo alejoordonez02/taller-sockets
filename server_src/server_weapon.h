@@ -11,6 +11,7 @@ protected:
     int cost;
     int ammo;
     int ammo_cost;
+
 public:
     Weapon(const WeaponName& name, const int& cost, const int& ammo, const int& ammo_cost);
 
@@ -43,22 +44,22 @@ public:
     bool operator==(const Weapon& weapon) const;
 };
 
-class Glock : public Weapon {
+class Glock: public Weapon {
 public:
     Glock();
 };
 
-class Ak47 : public Weapon {
+class Ak47: public Weapon {
 public:
     Ak47();
 };
 
-class M3 : public Weapon {
+class M3: public Weapon {
 public:
     M3();
 };
 
-class Awp : public Weapon {
+class Awp: public Weapon {
 public:
     Awp();
 };

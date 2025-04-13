@@ -1,13 +1,14 @@
 #include <iostream>
 #include <string>
 
-#include "../common_src/common_socket.h"
-#include "../common_src/common_protocol.h"
 #include "../common_src/common_command.h"
 #include "../common_src/common_output.h"
+#include "../common_src/common_protocol.h"
+#include "../common_src/common_socket.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) return -1;
+    if (argc != 4)
+        return -1;
 
     const std::string hostname = argv[1];
     const std::string servname = argv[2];
@@ -39,15 +40,15 @@ int main(int argc, char* argv[]) {
 
     std::string scmd;
     while (getline(std::cin, scmd) && scmd != "exit") {
-    /*
-     * Enviar comandos
-     * */
+        /*
+         * Enviar comandos
+         * */
         Command cmd(scmd);
         protocol->send(cmd);
 
-    /*
-     * Recibir salidas e imprimirlas
-     * */
+        /*
+         * Recibir salidas e imprimirlas
+         * */
         Output equipment = protocol->recv_output();
         std::cout << equipment.get_output();
     }

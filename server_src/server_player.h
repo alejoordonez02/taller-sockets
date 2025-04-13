@@ -19,7 +19,7 @@ public:
     /*
      * Constructor
      * */
-    Player(const std::string &username);
+    Player(const std::string& username);
 
     /*
      * Buy

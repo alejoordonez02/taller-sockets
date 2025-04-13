@@ -6,7 +6,7 @@
 #include "common_protocol.h"
 #include "common_text_serializer.h"
 
-class TextProtocol : public Protocol {
+class TextProtocol: public Protocol {
 private:
     Socket skt;
     TextSerializer srl;

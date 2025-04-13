@@ -1,9 +1,9 @@
 #include "common_text_serializer.h"
 
-#include <iostream>
 #include <cstdint>
-#include <vector>
+#include <map>
 #include <string>
+#include <vector>
 
 #include "common_command.h"
 #include "common_output.h"
@@ -57,8 +57,7 @@ void TextSerializer::initialize_output_type_maps() {
 }
 
 void TextSerializer::initialize_knife_maps() {
-    knife_to_srl = {{true, SRL_KNIFE_EQUIPPED},
-                    {false, SRL_KNIFE_NOT_EQUIPPED}};
+    knife_to_srl = {{true, SRL_KNIFE_EQUIPPED}, {false, SRL_KNIFE_NOT_EQUIPPED}};
 
     srl_to_knife = get_inverse_map(knife_to_srl);
 }
@@ -135,16 +134,16 @@ void TextSerializer::serialize_ammo(std::string& srlzd_cmd, const Command& cmd) 
 std::string TextSerializer::serialize(const Command& cmd) const {
     std::string srlzd_cmd;
 
-    switch(cmd.get_type()) {
-    case CommandType::BUY:
-        serialize_buy(srlzd_cmd, cmd);
-        break;
-    case CommandType::AMMO:
-        serialize_ammo(srlzd_cmd, cmd);
-        break;
-    default:
-        srlzd_cmd.clear();
-        break;
+    switch (cmd.get_type()) {
+        case CommandType::BUY:
+            serialize_buy(srlzd_cmd, cmd);
+            break;
+        case CommandType::AMMO:
+            serialize_ammo(srlzd_cmd, cmd);
+            break;
+        default:
+            srlzd_cmd.clear();
+            break;
     }
 
     srlzd_cmd.append("\n");
@@ -167,13 +166,13 @@ Command TextSerializer::deserialize_command(const std::string& srlzd_cmd) const 
     std::vector<std::string> tkns = split(srlzd_cmd);
     CommandType dsrlzd_command_type = srl_to_cmd_type.at(tkns[1]);
 
-    switch(dsrlzd_command_type) {
-    case CommandType::BUY:
-        return deserialize_buy(tkns);
-    case CommandType::AMMO:
-        return deserialize_ammo(tkns);
-    default:
-        return Command();
+    switch (dsrlzd_command_type) {
+        case CommandType::BUY:
+            return deserialize_buy(tkns);
+        case CommandType::AMMO:
+            return deserialize_ammo(tkns);
+        default:
+            return Command();
     }
 }
 
@@ -222,7 +221,8 @@ std::string TextSerializer::serialize(const Output& output) const {
     return srlzd_output;
 }
 
-Output TextSerializer::deserialize_equipment(const std::vector<std::string>& slrzd_output_tkns) const {
+Output TextSerializer::deserialize_equipment(
+        const std::vector<std::string>& slrzd_output_tkns) const {
     int dsrlzd_money = std::stoi(slrzd_output_tkns[2]);
     bool dsrlzd_knife = srl_to_knife.at(slrzd_output_tkns[5]);
     WeaponName dsrlzd_primary = srl_to_weapon_name.at(slrzd_output_tkns[8]);
@@ -230,17 +230,18 @@ Output TextSerializer::deserialize_equipment(const std::vector<std::string>& slr
     WeaponName dsrlzd_secondary = srl_to_weapon_name.at(slrzd_output_tkns[12]);
     int dsrlzd_secondary_ammo = std::stoi(slrzd_output_tkns[13]);
 
-    return Output(OutputType::EQUIPMENT, dsrlzd_money, dsrlzd_knife, dsrlzd_primary, dsrlzd_primary_ammo, dsrlzd_secondary, dsrlzd_secondary_ammo);
+    return Output(OutputType::EQUIPMENT, dsrlzd_money, dsrlzd_knife, dsrlzd_primary,
+                  dsrlzd_primary_ammo, dsrlzd_secondary, dsrlzd_secondary_ammo);
 }
 
 Output TextSerializer::deserialize_output(const std::string& srlzd_output) const {
     std::vector<std::string> tkns = split(srlzd_output);
     OutputType dsrlzd_output_type = srl_to_output_type.at(tkns[0]);
 
-    switch(dsrlzd_output_type) {
-    case OutputType::EQUIPMENT:
-        return deserialize_equipment(tkns);
-    default:
-        return Output();
+    switch (dsrlzd_output_type) {
+        case OutputType::EQUIPMENT:
+            return deserialize_equipment(tkns);
+        default:
+            return Output();
     }
 }

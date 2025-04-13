@@ -1,13 +1,15 @@
 #include <iostream>
 #include <string>
 
-#include "../common_src/common_socket.h"
 #include "../common_src/common_protocol.h"
+#include "../common_src/common_socket.h"
+
 #include "server_command_processor.h"
 #include "server_player.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) return -1;
+    if (argc != 3)
+        return -1;
 
     const std::string servname = argv[1];
     const std::string sprotocol_type = argv[2];
@@ -31,9 +33,10 @@ int main(int argc, char* argv[]) {
 
     if (sprotocol_type == "binary")
         protocol_type = ProtocolType::BINARY;
-    else if(sprotocol_type == "text")
+    else if (sprotocol_type == "text")
         protocol_type = ProtocolType::TEXT;
-    else return -1;
+    else
+        return -1;
 
     Protocol::send_protocol_type(protocol_type, skt);
 
@@ -58,7 +61,7 @@ int main(int argc, char* argv[]) {
     Command cmd;
     do {
         Output equipment = processor.get_equipment();
-        if(!protocol->send(equipment))
+        if (!protocol->send(equipment))
             break;
 
         cmd = protocol->recv_command();

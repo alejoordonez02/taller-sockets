@@ -27,7 +27,14 @@ Output::Output():
  * Success and not enough
  * money outputs
  * */
-Output::Output(const OutputType& type): type(type) {}
+Output::Output(const OutputType& type):
+        type(type),
+        money(0),
+        knife(false),
+        primary(WeaponName::NONE),
+        primary_ammo(0),
+        secondary(WeaponName::NONE),
+        secondary_ammo(0) {}
 
 /*
  * Equipment constructor

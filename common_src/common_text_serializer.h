@@ -1,6 +1,7 @@
 #ifndef TEXT_SERIALIZER
 #define TEXT_SERIALIZER
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -32,6 +33,7 @@ private:
     Command deserialize_buy(const std::vector<std::string>& srlzd_cmd_tkns) const;
     Command deserialize_ammo(const std::vector<std::string>& srlzd_cmd_tkns) const;
     Output deserialize_equipment(const std::vector<std::string>& slrzd_output_tkns) const;
+
 public:
     /*
      * Constructor initializes maps

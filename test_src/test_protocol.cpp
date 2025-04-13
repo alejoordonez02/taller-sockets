@@ -3,6 +3,4 @@
 
 #include "../common_src/common_protocol.h"
 
-int main() {
-    return 0;
-}
+int main() { return 0; }

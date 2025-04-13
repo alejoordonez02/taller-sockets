@@ -37,7 +37,7 @@ public:
      * Success and not enough
      * money outputs
      * */
-    Output(const OutputType& type);
+    explicit Output(const OutputType& type);
 
     /*
      * Equipment

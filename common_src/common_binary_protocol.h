@@ -10,7 +10,7 @@ private:
     BinarySerializer srl;
 
 public:
-    BinaryProtocol(Socket&& skt);
+    explicit BinaryProtocol(Socket&& skt);
 
     /*
      * Commands

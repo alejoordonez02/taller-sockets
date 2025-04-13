@@ -12,7 +12,7 @@ private:
     TextSerializer srl;
 
 public:
-    TextProtocol(Socket&& skt);
+    explicit TextProtocol(Socket&& skt);
 
     /*
      * Commands

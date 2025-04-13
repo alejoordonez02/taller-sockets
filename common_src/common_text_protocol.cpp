@@ -1,8 +1,8 @@
 #include "common_text_protocol.h"
 
+#include <algorithm>
 #include <string>
 #include <utility>
-#include <algorithm>
 
 #include "common_text_serializer.h"
 

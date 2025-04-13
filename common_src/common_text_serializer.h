@@ -1,6 +1,7 @@
 #ifndef TEXT_SERIALIZER
 #define TEXT_SERIALIZER
 
+#include <map>
 #include <string>
 #include <vector>
 

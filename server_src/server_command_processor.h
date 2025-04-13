@@ -14,7 +14,7 @@ private:
     Output process_ammo(const Command& cmd);
 
 public:
-    CommandProcessor(Player&& player);
+    explicit CommandProcessor(Player&& player);
     Output process(const Command& cmd);
     Output get_equipment() const;
 };

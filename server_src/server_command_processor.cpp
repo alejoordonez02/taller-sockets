@@ -1,6 +1,8 @@
 #include "server_command_processor.h"
 
 #include <iostream>
+#include <memory>
+#include <utility>
 
 #include "../common_src/common_command.h"
 #include "../common_src/common_weapon_names.h"
@@ -8,7 +10,7 @@
 #include "server_player.h"
 #include "server_weapon.h"
 
-CommandProcessor::CommandProcessor(Player&& player): player(std::move(player)) {};
+CommandProcessor::CommandProcessor(Player&& player): player(std::move(player)) {}
 
 Output CommandProcessor::process_buy(const Command& cmd) {
     std::unique_ptr<Weapon> weapon = Weapon::create(cmd.get_weapon_name());

@@ -5,121 +5,114 @@
  *
  * De acuerdo con la GPL v2, este código se mantiene bajo la misma licencia.
  */
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <errno.h>
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-
 #include "common_socket.h"
-#include "common_resolver.h"
-#include "common_liberror.h"
 
 #include <stdexcept>
+
+#include <arpa/inet.h>
+#include <assert.h>
+#include <errno.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include "common_liberror.h"
+#include "common_resolver.h"
 
 #define STREAM_SEND_CLOSED 0x01
 #define STREAM_RECV_CLOSED 0x02
 #define STREAM_BOTH_CLOSED 0x03
 #define STREAM_BOTH_OPEN 0x00
 
-Socket::Socket(
-        const char *hostname,
-        const char *servname) {
+Socket::Socket(const char* hostname, const char* servname) {
     Resolver resolver(hostname, servname, false);
 
     int s = -1;
-    int skt = -1;
+    int lskt = -1;
     this->closed = true;
     this->stream_status = STREAM_BOTH_CLOSED;
 
     while (resolver.has_next()) {
-        struct addrinfo *addr = resolver.next();
+        struct addrinfo* addr = resolver.next();
 
-        if (skt != -1)
-            ::close(skt);
+        if (lskt != -1)
+            ::close(lskt);
 
-        skt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-        if (skt == -1) {
+        lskt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (lskt == -1) {
             continue;
         }
 
-        s = connect(skt, addr->ai_addr, addr->ai_addrlen);
+        s = connect(lskt, addr->ai_addr, addr->ai_addrlen);
         if (s == -1) {
             continue;
         }
 
         this->closed = false;
         this->stream_status = STREAM_BOTH_OPEN;
-        this->skt = skt;
+        this->skt = lskt;
         return;
     }
 
     int saved_errno = errno;
 
-    if (skt != -1)
-        ::close(skt);
+    if (lskt != -1)
+        ::close(lskt);
 
-    throw LibError(
-            saved_errno,
-            "socket construction failed (connect to %s:%s)",
-            (hostname ? hostname : ""),
-            (servname ? servname : ""));
+    throw LibError(saved_errno, "socket construction failed (connect to %s:%s)",
+                   (hostname ? hostname : ""), (servname ? servname : ""));
 }
 
-Socket::Socket(const char *servname) {
+Socket::Socket(const char* servname) {
     Resolver resolver(nullptr, servname, true);
 
     int s = -1;
-    int skt = -1;
+    int lskt = -1;
     this->closed = true;
     this->stream_status = STREAM_BOTH_CLOSED;
     while (resolver.has_next()) {
-        struct addrinfo *addr = resolver.next();
+        struct addrinfo* addr = resolver.next();
 
-        if (skt != -1)
-            ::close(skt);
+        if (lskt != -1)
+            ::close(lskt);
 
-        skt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-        if (skt == -1) {
+        lskt = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (lskt == -1) {
             continue;
         }
 
         int optval = 1;
-        s = setsockopt(skt, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+        s = setsockopt(lskt, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
         if (s == -1) {
             continue;
         }
 
-        s = bind(skt, addr->ai_addr, addr->ai_addrlen);
+        s = bind(lskt, addr->ai_addr, addr->ai_addrlen);
         if (s == -1) {
             continue;
         }
 
-        s = listen(skt, 20);
+        s = listen(lskt, 20);
         if (s == -1) {
             continue;
         }
 
         this->closed = false;
         this->stream_status = STREAM_BOTH_OPEN;
-        this->skt = skt;
+        this->skt = lskt;
         return;
     }
 
     int saved_errno = errno;
 
-    if (skt != -1)
-        ::close(skt);
+    if (lskt != -1)
+        ::close(lskt);
 
-    throw LibError(
-            saved_errno,
-            "socket construction failed (listen on %s)",
-            (servname ? servname : ""));
+    throw LibError(saved_errno, "socket construction failed (listen on %s)",
+                   (servname ? servname : ""));
 }
 
 Socket::Socket(Socket&& other) {
@@ -150,12 +143,9 @@ Socket& Socket::operator=(Socket&& other) {
     return *this;
 }
 
-int Socket::recvsome(
-        void *data,
-        unsigned int sz
-    ) {
+int Socket::recvsome(void* data, unsigned int sz) {
     chk_skt_or_fail();
-    int s = recv(this->skt, (char*)data, sz, 0);
+    int s = recv(this->skt, reinterpret_cast<char*>(data), sz, 0);
     if (s == 0) {
         stream_status |= STREAM_RECV_CLOSED;
         return 0;
@@ -166,12 +156,9 @@ int Socket::recvsome(
     }
 }
 
-int Socket::sendsome(
-        const void *data,
-        unsigned int sz
-    ) {
+int Socket::sendsome(const void* data, unsigned int sz) {
     chk_skt_or_fail();
-    int s = send(this->skt, (char*)data, sz, MSG_NOSIGNAL);
+    int s = send(this->skt, reinterpret_cast<const char*>(data), sz, MSG_NOSIGNAL);
     if (s == -1) {
         if (errno == EPIPE) {
             stream_status |= STREAM_SEND_CLOSED;
@@ -187,25 +174,16 @@ int Socket::sendsome(
     }
 }
 
-int Socket::recvall(
-        void *data,
-        unsigned int sz
-    ) {
+int Socket::recvall(void* data, unsigned int sz) {
     unsigned int received = 0;
 
     while (received < sz) {
-        int s = recvsome(
-                (char*)data + received,
-                sz - received);
+        int s = recvsome(reinterpret_cast<char*>(data) + received, sz - received);
 
         if (s <= 0) {
             assert(s == 0);
             if (received)
-                throw LibError(
-                        EPIPE,
-                        "socket received only %d of %d bytes",
-                        received,
-                        sz);
+                throw LibError(EPIPE, "socket received only %d of %d bytes", received, sz);
             else
                 return 0;
         } else {
@@ -217,25 +195,16 @@ int Socket::recvall(
 }
 
 
-int Socket::sendall(
-        const void *data,
-        unsigned int sz
-    ) {
+int Socket::sendall(const void* data, unsigned int sz) {
     unsigned int sent = 0;
 
     while (sent < sz) {
-        int s = sendsome(
-                (char*)data + sent,
-                sz - sent);
+        int s = sendsome(reinterpret_cast<const char*>(data) + sent, sz - sent);
 
         if (s <= 0) {
             assert(s == 0);
             if (sent)
-                throw LibError(
-                        EPIPE,
-                        "socket sent only %d of %d bytes",
-                        sent,
-                        sz);
+                throw LibError(EPIPE, "socket sent only %d of %d bytes", sent, sz);
             else
                 return 0;
         } else {
@@ -246,8 +215,8 @@ int Socket::sendall(
     return sz;
 }
 
-Socket::Socket(int skt) {
-    this->skt = skt;
+Socket::Socket(int lskt) {
+    this->skt = lskt;
     this->closed = false;
     this->stream_status = STREAM_BOTH_OPEN;
 }
@@ -282,13 +251,9 @@ void Socket::shutdown(int how) {
     }
 }
 
-bool Socket::is_stream_send_closed() const {
-    return stream_status & STREAM_SEND_CLOSED;
-}
+bool Socket::is_stream_send_closed() const { return stream_status & STREAM_SEND_CLOSED; }
 
-bool Socket::is_stream_recv_closed() const {
-    return stream_status & STREAM_RECV_CLOSED;
-}
+bool Socket::is_stream_recv_closed() const { return stream_status & STREAM_RECV_CLOSED; }
 
 int Socket::close() {
     chk_skt_or_fail();
@@ -305,11 +270,9 @@ Socket::~Socket() {
 }
 
 void Socket::chk_skt_or_fail() const {
-    if (skt == -1) {
-        throw std::runtime_error(
-                "socket with invalid file descriptor (-1), "
-                "perhaps you are using a *previously moved* "
-                "socket (and therefore invalid)."
-                );
+    if (this->skt == -1) {
+        throw std::runtime_error("socket with invalid file descriptor (-1), "
+                                 "perhaps you are using a *previously moved* "
+                                 "socket (and therefore invalid).");
     }
 }

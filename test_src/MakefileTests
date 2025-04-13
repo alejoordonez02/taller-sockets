@@ -1,70 +1,76 @@
+# FLAGS
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17 -g
+CXXFLAGS = -Wall -Wextra -std=c++17 -g -D_GNU_SOURCE -D _POSIX_C_SOURCE=200809L
 INCLUDES = -I../common_src
 
-PROTOCOL_SRC = ../common_src/common_protocol.cpp \
-	../common_src/common_binary_protocol.cpp \
-	../common_src/common_text_protocol.cpp \
+# SOURCE FILES
+SRC = ../common_src/common_socket.cpp \
+	../common_src/common_liberror.cpp \
+	../common_src/common_resolver.cpp \
+	../common_src/common_resolvererror.cpp \
+	../common_src/common_protocol.cpp \
+	../common_src/common_serializer.cpp \
+	../common_src/common_binary_serializer.cpp \
+	../common_src/common_text_serializer.cpp \
+	../common_src/common_command.cpp \
+	../common_src/common_output.cpp \
+	../common_src/common_tokenizer.cpp
 
-COMMAND_SRC = ../common_src/common_command.cpp
+# OBJECT FILES
+OBJ = $(SRC:.cpp=.o)
 
-MODEL_SRC = ../server_src/server_player.cpp \
-	../server_src/server_weapon.cpp
+# TEST FILES
+TEST_SRC = test_protocol.cpp \
+	test_serializer.cpp \
+	test_binary_serializer.cpp \
+	test_command.cpp \
+	test_output.cpp
 
-COMMAND_PROCESSOR_SRC = ../server_src/server_command_processor.cpp
+# TEST OBJECT FILES
+TEST_OBJ = $(TEST_SRC:.cpp=.o)
 
-OUTPUT_SRC = ../common_src/common_output.cpp
-
-TESTS = test_command test_protocol test_binary_protocol test_player \
-	test_weapon test_command_processor test_output
+# TESTS
+TESTS = test_protocol \
+	test_serializer \
+	test_binary_serializer \
+	test_command \
+	test_output
 
 all: $(TESTS)
 
 clean:
 	rm -f $(TESTS) *.o
 
-test_command: test_command.cpp $(COMMAND_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(COMMAND_SRC)
+test_protocol: test_protocol.o $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
-test_protocol: test_protocol.cpp $(PROTOCOL_SRC) $(COMMAND_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC) $(COMMAND_SRC) 
+test_serializer: test_serializer.o $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
-test_binary_protocol: test_binary_protocol.cpp $(PROTOCOL_SRC) $(COMMAND_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(PROTOCOL_SRC) $(COMMAND_SRC)
+test_binary_serializer: test_binary_serializer.o $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
-test_player: test_player.cpp $(MODEL_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(MODEL_SRC)
+test_command: test_command.o $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
-test_weapon: test_weapon.cpp $(MODEL_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< $(MODEL_SRC)
+test_output: test_output.o $(OBJ)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^
 
-test_command_processor: test_command_processor.cpp \
-	$(COMMAND_PROCESSOR_SRC) $(COMMAND_SRC) $(MODEL_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< \
-	$(COMMAND_PROCESSOR_SRC) $(COMMAND_SRC) $(MODEL_SRC)
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-test_output: test_output.cpp \
-	$(OUTPUT_SRC) $(COMMAND_SRC)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $< \
-	$(OUTPUT_SRC) $(COMMAND_SRC)
-
-run_command: test_command
-	./test_command
-
+# RUN
 run_protocol: test_protocol
 	./test_protocol
 
-run_binary: test_binary_protocol
-	./test_binary_protocol
+run_serializer: test_serializer
+	./test_serializer
 
-run_player: test_player
-	./test_player
+run_binary_serializer: test_binary_serializer
+	./test_binary_serializer
 
-run_weapon: test_weapon
-	./test_weapon
-
-run_command_processor: test_command_processor
-	./test_command_processor
+run_command: test_command
+	./test_command
 
 run_output: test_output
 	./test_output
@@ -76,32 +82,12 @@ run_all: $(TESTS)
 		./$$test; \
 	done
 
-test_command.o: test_command.cpp ../common_src/common_command.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-
-test_protocol.o: test_protocol.cpp ../common_src/common_protocol.h \
-	../common_src/common_binary_protocol.h \
-	../common_src/common_text_protocol.h \
-	../common_src/common_command.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-
-test_binary_protocol.o: test_binary_protocol.cpp ../common_src/common_protocol.h \
-	../common_src/common_binary_protocol.h \
-	../common_src/common_command.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-
-test_player.o: test_player.cpp ../server_src/server_player.h \
-	../server_src/server_weapon.h
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c -o $@ $<
-
-test_command_processor.o: test_command_processor.cpp \
-	../server_src/server_command_processor.h \
-	../common_src/common_command.h \
-	../server_src/server_player.h \
-	../server_src/server_weapon.h
-
-test_output.o: test_output.src \
-	../common_src/common_output.h \
-	../common_src/common_command.h
-
-.PHONY: all clean run_command run_protocol run_binary run_player run_weapon run_command_processor run_all
+# PHONY
+.PHONY: all \
+	clean \
+	run_protocol \
+	run_serializer \
+	run_binary_serializer \
+	run_command \
+	run_output \
+	run_all

@@ -1,17 +1,30 @@
 #ifndef TEXT_PROTOCOL_H
 #define TEXT_PROTOCOL_H
 
+#include <string>
+
 #include "common_protocol.h"
+#include "common_text_serializer.h"
 
-class TextProtocol : public Protocol {
+class TextProtocol: public Protocol {
+private:
+    Socket skt;
+    TextSerializer srl;
+
 public:
-    int srlz_cmd(
-        std::vector<uint8_t> &srlzd_cmd,
-        const Command &cmd) override;
+    explicit TextProtocol(Socket&& skt);
 
-    int dsrlz_cmd(
-        Command &cmd,
-        const char *srlzd_cmd) override;
+    /*
+     * Commands
+     * */
+    bool send(const Command& cmd) override;
+    Command recv_command() override;
+
+    /*
+     * Outputs
+     * */
+    bool send(const Output& output) override;
+    Output recv_output() override;
 };
 
 #endif

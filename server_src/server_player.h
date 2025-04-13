@@ -1,7 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <optional>
 #include <string>
 
 #include "server_weapon.h"
@@ -11,29 +10,37 @@ private:
     const std::string username;
     int money;
     bool knife;
-    std::optional<Weapon> primary;
-    std::optional<Weapon> secondary;
-    int buy_ammo(
-        std::optional<Weapon> &weapon,
-        int count);
+    std::unique_ptr<Weapon> primary;
+    std::unique_ptr<Weapon> secondary;
+
+    bool buy_ammo(std::unique_ptr<Weapon>& weapon, int& count);
+
 public:
-    Player(
-        const std::string &username);
-    const std::string &get_username() const;
-    int get_money();
-    bool get_knife();
-    std::optional<Weapon> get_primary();
-    std::optional<Weapon> get_secondary();
-    int buy_primary(
-        Weapon &weapon);
-    int buy_ammo_primary(
-        int count);
-    int buy_ammo_secondary(
-        int count);
-    WeaponName get_primary_name();
-    WeaponName get_secondary_name();
-    int get_primary_ammo();
-    int get_secondary_ammo();
+    /*
+     * Constructor
+     * */
+    Player(const std::string& username);
+
+    /*
+     * Buy
+     * */
+    bool buy_primary(std::unique_ptr<Weapon>&& weapon);
+
+    /*
+     * Ammo
+     * */
+    bool buy_primary_ammo(int& count);
+    bool buy_secondary_ammo(int& count);
+
+    /*
+     * Getters
+     * */
+    int get_money() const;
+    bool get_knife() const;
+    WeaponName get_primary_name() const;
+    int get_ammo_primary() const;
+    WeaponName get_secondary_name() const;
+    int get_ammo_secondary() const;
 };
 
 #endif

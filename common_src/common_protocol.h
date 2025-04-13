@@ -1,44 +1,55 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <string>
-#include <vector>
-#include <cstdint>
 #include <memory>
+#include <string>
 
 #include "common_command.h"
-
-enum class ProtocolType {TEXT, BINARY};
+#include "common_output.h"
+#include "common_protocol_types.h"
+#include "common_serializer.h"
+#include "common_socket.h"
 
 class Protocol {
-protected:
-    std::vector<std::string> tknz(
-        const std::string &s);
 public:
-    static std::unique_ptr<Protocol> create(
-        const ProtocolType &prtcl_t);
+    /*
+     * Virtual methods
+     * */
+    /*
+     * Commands
+     * */
+    virtual bool send(const Command& cmd) = 0;
+    virtual Command recv_command() = 0;
 
-    virtual int srlz_cmd(
-        std::vector<uint8_t> &srlzd_cmd,
-        const Command &cmd) = 0;
+    /*
+     * Outputs
+     * */
+    virtual bool send(const Output& output) = 0;
+    virtual Output recv_output() = 0;
 
-    virtual int dsrlz_cmd(
-        Command &cmd,
-        const char *srlzd_cmd) = 0;
+    /*
+     * Static methods
+     * */
+    /*
+     * Factory
+     * */
+    static std::unique_ptr<Protocol> create(const ProtocolType& type, Socket&& skt);
 
-    static int srlz_username(
-        std::vector<uint8_t> &srlzd_username,
-        const std::string &username);
-    static int srlz_prtcl_t(
-        std::vector<uint8_t> &srlzd_prtcl_t,
-        const std::string &prtcl_t);
+    /*
+     * Send username
+     * */
+    static void send_username(const std::string& username, Socket& skt);
+    static std::string recv_username(Socket& skt);
 
-    static int dsrlz_username(
-        std::string &username,
-        const char *srlzd_username);
-    static int dsrlz_prtcl_t(
-        ProtocolType *prtcl_t,
-        const char *srlzd_prtcl_t);
+    /*
+     * Send protocol type
+     * */
+    static void send_protocol_type(const ProtocolType& type, Socket& skt);
+    static ProtocolType recv_protocol_type(Socket& skt);
+
+    /*
+     * Destructor
+     * */
     virtual ~Protocol() = default;
 };
 

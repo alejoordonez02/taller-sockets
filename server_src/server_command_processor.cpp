@@ -1,73 +1,58 @@
-#include <iostream> // delegar el stdout!
-
 #include "server_command_processor.h"
+
+#include <iostream>
+
 #include "../common_src/common_command.h"
+#include "../common_src/common_weapon_names.h"
+
 #include "server_player.h"
 #include "server_weapon.h"
 
-// enum class Outputs {NOT_ENOUGH_MONEY_AMMO, ...} para delegar
-// debería haber una clase Output que haga los outputs del cliente
-// y del server, recibe algún OutputType y lo que tenga que outputear
-// si hace falta. Podría tener dos subclases para client y server
+CommandProcessor::CommandProcessor(Player&& player): player(std::move(player)) {};
 
-CommandProcessor::CommandProcessor(
-    Player &player) :
-    player(player) {}
-
-int CommandProcessor::process_buy(
-    Command in_cmd) {
-
-    Weapon wpn = Weapon::create(in_cmd.get_wpn());
-
-    return player.buy_primary(wpn);
+Output CommandProcessor::process_buy(const Command& cmd) {
+    std::unique_ptr<Weapon> weapon = Weapon::create(cmd.get_weapon_name());
+    bool ret = player.buy_primary(std::move(weapon));
+    if (ret)
+        return Output(OutputType::SUCCESS);
+    return Output(OutputType::NEM_WEAPON);
 }
 
-int CommandProcessor::process_ammo(
-    Command in_cmd) {
+Output CommandProcessor::process_ammo(const Command& cmd) {
+    int count = cmd.get_count();
+    bool ret;
 
-    switch(in_cmd.get_wpn_t()) {
-    case WeaponType::PRIMARY:
-        return player.buy_ammo_primary(in_cmd.get_count());
-    case WeaponType::SECONDARY:
-        return player.buy_ammo_secondary(in_cmd.get_count());
-    default:
-        return -1;
+    switch (cmd.get_weapon_type()) {
+        case WeaponType::PRIMARY:
+            ret = player.buy_primary_ammo(count);
+            break;
+        case WeaponType::SECONDARY:
+            ret = player.buy_secondary_ammo(count);
+            break;
+        default:
+            return Output();
+    }
+
+    if (ret)
+        return Output(OutputType::SUCCESS);
+    return Output(OutputType::NEM_AMMO);
+}
+
+Output CommandProcessor::process(const Command& cmd) {
+    switch (cmd.get_type()) {
+        case CommandType::BUY:
+            return process_buy(cmd);
+        case CommandType::AMMO:
+            return process_ammo(cmd);
+        default:
+            return Output();
     }
 }
 
-int CommandProcessor::process(
-    Command &out_cmd,
-    Command in_cmd) {
+Output CommandProcessor::get_equipment() const {
+    Output equipment(OutputType::EQUIPMENT, player.get_money(), player.get_knife(),
+                     player.get_primary_name(), player.get_ammo_primary(),
+                     player.get_secondary_name(), player.get_ammo_secondary());
 
-    int ret;
-
-    switch(in_cmd.get_t()) {
-    case Type::BUY:
-        ret = process_buy(in_cmd);
-        if (ret == -1)
-            std::cout << "Not enough money to buy weapon\n";
-        break;
-    case Type::AMMO:
-        ret = process_ammo(in_cmd);
-        if (ret == -1)
-            std::cout << "Not enough money to buy ammo\n";
-        break;
-    default:
-        ret = -1;
-        break;
-    }
-
-    Command equipment(
-        Type::EQUIPMENT,
-        player.get_money(),
-        player.get_knife(),
-        player.get_primary_name(),
-        player.get_secondary_name(),
-        player.get_primary_ammo(),
-        player.get_secondary_ammo()
-    );
-
-    out_cmd = equipment;
-
-    return ret;
+    return equipment;
 }

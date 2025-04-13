@@ -1,57 +1,61 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <map>
 #include <string>
+#include <vector>
 
-#include "../common_src/common_weapon_names.h"
+#include "common_tokenizer.h"
+#include "common_weapon_names.h"
 
-enum class Type {EQUIPMENT, BUY, AMMO};
-enum class WeaponType {NONE, PRIMARY, SECONDARY};
+enum class CommandType { NONE, BUY, AMMO };
 
-class Command {             //
-private:                    // refactor -> sub-
-    Type t;                 // command classes &
-    WeaponName wpn;         // attributes -> const
-    WeaponType wpn_t;       /***/
+class Command {
+private:
+    static const std::map<std::string, CommandType> s_to_cmd_type;
+    static const std::map<std::string, WeaponName> s_to_weapon_name;
+    static const std::map<std::string, WeaponType> s_to_weapon_type;
+
+    CommandType type;
+    WeaponName weapon_name;
+    WeaponType weapon_type;
     int count;
-    int money;
-    bool knife;
-    WeaponName primary;
-    WeaponName secondary;
-    int primary_ammo;
-    int secondary_ammo;
+
+    static CommandType get_type(const std::vector<std::string>& cmd_tkns);
+    static WeaponName get_weapon_name(const std::vector<std::string>& cmd_tkns);
+    static WeaponType get_weapon_type(const std::vector<std::string>& cmd_tkns);
+    static int get_count(const std::vector<std::string>& cmd_tkns);
 
 public:
-    Command() = default;
-    Command( // buy
-        Type t,
-        WeaponName wpn);
-    Command( // ammo
-        Type t,
-        WeaponType wpn_t,
-        int count);
-    Command(
-        std::string cmd);
-    Command(
-        Type t,
-        int money,
-        bool knife,
-        WeaponName primary,
-        WeaponName secondary,
-        int primary_ammo,
-        int secondary_ammo);
-    Type get_t() const;
-    WeaponName get_wpn() const;
-    WeaponType get_wpn_t() const;
+    Command();
+    /*
+     * From string
+     * */
+    explicit Command(const std::string& s_cmd);
+
+    /*
+     * BUY
+     * */
+    Command(const CommandType& type, const WeaponName& weapon_name);
+
+    /*
+     * AMMO
+     * */
+    Command(const CommandType& type, const WeaponType& weapon_type, const int& count);
+
+    /*
+     * Getters
+     * */
+    CommandType get_type() const;
+    WeaponName get_weapon_name() const;
+    WeaponType get_weapon_type() const;
     int get_count() const;
-    int get_money() const;
-    bool get_knife() const;
-    WeaponName get_primary() const;
-    WeaponName get_secondary() const;
-    int get_primary_ammo() const;
-    int get_secondary_ammo() const;
-    bool operator==(
-        const Command& cmd) const;
+
+
+    /*
+     * Operator==
+     * */
+    bool operator==(const Command& cmd) const;
 };
 
 #endif

@@ -3,73 +3,37 @@
 #include <string>
 
 #include "../common_src/common_output.h"
-#include "../common_src/common_command.h"
+#include "../common_src/common_weapon_names.h"
 
-void test_output_equipment() {
-    Command equipment(
-        Type::EQUIPMENT,
-        500,
-        true,
-        WeaponName::AK47,
-        WeaponName::GLOCK,
-        30,
-        90);
+void test00_output_full_equipment_returns_expected_output() {
+    Output output(OutputType::EQUIPMENT, 2000, true, WeaponName::M3, 90, WeaponName::GLOCK, 30);
 
-    std::string expected_output = 
-        "money: $500 | knife: equipped | primary: ak-47, 30 | secondary: glock, 90\n";
+    std::string expected_output =
+            "money: $2000 | knife: equipped | primary: m3, 90 | secondary: glock, 30\n";
 
-    std::string output = Output::output_equipment(equipment);
+    std::string soutput = output.get_output();
 
-    assert(output == expected_output);
+    assert(soutput == expected_output);
 
-    std::cout << "passed test_output_equipment()!\n";
+    std::cout << "Passed 00!\n";
 }
 
-void test_output_equipment_no_primary() {
-    Command equipment(
-        Type::EQUIPMENT,
-        500,
-        true,
-        WeaponName::NONE,
-        WeaponName::GLOCK,
-        0,
-        90);
+void test01_output_empty_equipment_returns_expected_output() {
+    Output output(OutputType::EQUIPMENT, 0, false, WeaponName::NONE, 0, WeaponName::NONE, 0);
 
-    std::string expected_output = 
-        "money: $500 | knife: equipped | primary: not equipped | secondary: glock, 90\n";
+    std::string expected_output =
+            "money: $0 | knife: not equipped | primary: not equipped | secondary: not equipped\n";
 
-    std::string output = Output::output_equipment(equipment);
+    std::string soutput = output.get_output();
 
-    assert(output == expected_output);
+    assert(soutput == expected_output);
 
-    std::cout << "passed test_output_equipment_no_primary()!\n";
-}
-
-
-void test_output_equipment_no_primary_no_secondary() {
-    Command equipment(
-        Type::EQUIPMENT,
-        500,
-        true,
-        WeaponName::NONE,
-        WeaponName::NONE,
-        0,
-        0);
-
-    std::string expected_output = 
-        "money: $500 | knife: equipped | primary: not equipped | secondary: not equipped\n";
-
-    std::string output = Output::output_equipment(equipment);
-
-    assert(output == expected_output);
-
-    std::cout << "passed test_output_equipment_no_primary_no_secondary()!\n";
+    std::cout << "Passed 01!\n";
 }
 
 int main() {
-    test_output_equipment();
-    test_output_equipment_no_primary();
-    test_output_equipment_no_primary_no_secondary();
+    test00_output_full_equipment_returns_expected_output();
+    test01_output_empty_equipment_returns_expected_output();
 
     return 0;
 }

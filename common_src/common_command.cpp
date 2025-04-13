@@ -1,171 +1,110 @@
-#include <string>
-#include <vector>
-#include <sstream>
-#include <map>
-
 #include "common_command.h"
 
-std::vector<std::string> tknz(
-    const std::string &s) {
+#include <map>
+#include <string>
+#include <vector>
 
-    std::vector<std::string> tkns;
+#include "common_tokenizer.h"
 
-    std::istringstream iss(s);
+const std::map<std::string, CommandType> Command::s_to_cmd_type = {{"buy", CommandType::BUY},
+                                                                   {"ammo", CommandType::AMMO}};
 
-    std::string tkn;
-    while (iss >> tkn)
-        tkns.push_back(tkn);
+const std::map<std::string, WeaponName> Command::s_to_weapon_name = {{"glock", WeaponName::GLOCK},
+                                                                     {"ak-47", WeaponName::AK47},
+                                                                     {"m3", WeaponName::M3},
+                                                                     {"awp", WeaponName::AWP}};
 
-    return tkns;
+const std::map<std::string, WeaponType> Command::s_to_weapon_type = {
+        {"glock", WeaponType::SECONDARY},
+        {"ak-47", WeaponType::PRIMARY},
+        {"m3", WeaponType::PRIMARY},
+        {"awp", WeaponType::PRIMARY}};
+
+/*
+ * Constructor
+ * */
+/*
+ * Empty: Type NONE
+ * */
+Command::Command():
+        type(CommandType::NONE),
+        weapon_name(WeaponName::NONE),
+        weapon_type(WeaponType::NONE),
+        count(0) {}
+
+/*
+ * From string
+ * */
+CommandType Command::get_type(const std::vector<std::string>& cmd_tkns) {
+    return s_to_cmd_type.at(cmd_tkns[0]);
 }
 
-std::map<std::string, Type> cmd_t_map = {
-    {"buy", Type::BUY},             //
-    {"ammo", Type::AMMO},           //{prtcl_t??, Type::BUY},
-};                                  //{username??, Type::BUY},
-                                    /***/
-std::map<std::string, WeaponName> wpn_map = {
-    {"glock", WeaponName::GLOCK},
-    {"ak-47", WeaponName::AK47},
-    {"m3", WeaponName::M3},
-    {"awp", WeaponName::AWP}
-};
+WeaponName Command::get_weapon_name(const std::vector<std::string>& cmd_tkns) {
+    return s_to_weapon_name.at(cmd_tkns[1]);
+}
 
-std::map<std::string, WeaponType> wpn_t_map = {
-    {"glock", WeaponType::SECONDARY},
-    {"ak-47", WeaponType::PRIMARY},
-    {"m3", WeaponType::PRIMARY},
-    {"awp", WeaponType::PRIMARY}
-};
+WeaponType Command::get_weapon_type(const std::vector<std::string>& cmd_tkns) {
+    return s_to_weapon_type.at(cmd_tkns[1]);
+}
 
-Command::Command(
-    Type t,
-    WeaponName wpn) :
-    t(t),
-    wpn(wpn),
-    wpn_t(WeaponType::NONE),
-    count(0),
-    money(0),
-    knife(false),
-    primary(WeaponName::NONE),
-    secondary(WeaponName::NONE),
-    primary_ammo(0),
-    secondary_ammo(0) {}
+int Command::get_count(const std::vector<std::string>& cmd_tkns) { return std::stoi(cmd_tkns[2]); }
 
-Command::Command(
-    Type t,
-    WeaponType wpn_t,
-    int count) :
-    t(t),
-    wpn(WeaponName::NONE),
-    wpn_t(wpn_t),
-    count(count),
-    money(0),
-    knife(false),
-    primary(WeaponName::NONE),
-    secondary(WeaponName::NONE),
-    primary_ammo(0),
-    secondary_ammo(0) {}
+Command::Command(const std::string& s_cmd) {
+    std::vector<std::string> cmd_tkns = Tokenizer::tknz(s_cmd);
 
-Command::Command(
-    std::string cmd) {
+    CommandType cmd_type = get_type(cmd_tkns);
 
-    std::vector<std::string> cmd_tkns = tknz(cmd);
-
-    t = cmd_t_map[cmd_tkns[0]];
-    switch(t) {
-    case Type::BUY:
-        wpn = wpn_map[cmd_tkns[1]];
-        break;
-
-    case Type::AMMO:
-        wpn_t = wpn_t_map[cmd_tkns[1]];
-        count = std::stoi(cmd_tkns[2]);
-        break;
-
-    default: // error
-        break;
+    switch (cmd_type) {
+        case CommandType::BUY: {
+            *this = Command(cmd_type, get_weapon_name(cmd_tkns));
+            break;
+        }
+        case CommandType::AMMO: {
+            *this = Command(cmd_type, get_weapon_type(cmd_tkns), get_count(cmd_tkns));
+            break;
+            case CommandType::NONE:
+                break;
+        }
     }
 }
 
-Command::Command(
-    Type t,
-    int money,
-    bool knife,
-    WeaponName primary,
-    WeaponName secondary,
-    int primary_ammo,
-    int secondary_ammo) :
-    t(t),
-    wpn(WeaponName::NONE),
-    wpn_t(WeaponType::NONE),
-    count(0),
-    money(money),
-    knife(knife),
-    primary(primary),
-    secondary(secondary),
-    primary_ammo(primary_ammo),
-    secondary_ammo(secondary_ammo) {}
+/*
+ * BUY
+ * */
+Command::Command(const CommandType& type, const WeaponName& weapon_name):
+        type(type), weapon_name(weapon_name), weapon_type(WeaponType::NONE), count(0) {}
 
-Type Command::get_t() const {
-    return t;    
-}
+/*
+ * AMMO
+ * */
+Command::Command(const CommandType& type, const WeaponType& weapon_type, const int& count):
+        type(type), weapon_name(WeaponName::NONE), weapon_type(weapon_type), count(count) {}
 
-WeaponName Command::get_wpn() const {
-    return wpn;
-}
+/*
+ * Getters
+ * */
+CommandType Command::get_type() const { return type; }
 
-WeaponType Command::get_wpn_t() const {
-    return wpn_t;
-}
+WeaponName Command::get_weapon_name() const { return weapon_name; }
 
-int Command::get_count() const {
-    return count;
-}
+WeaponType Command::get_weapon_type() const { return weapon_type; }
 
-int Command::get_money() const {
-    return money;
-}
+int Command::get_count() const { return count; }
 
-bool Command::get_knife() const {
-    return knife;
-}
+/*
+ * Operator==
+ * */
+bool Command::operator==(const Command& cmd) const {
 
-WeaponName Command::get_primary() const {
-    return primary;
-}
-
-WeaponName Command::get_secondary() const {
-    return secondary;
-}
-
-int Command::get_primary_ammo() const {
-    return primary_ammo;
-}
-
-int Command::get_secondary_ammo() const {
-    return secondary_ammo;
-}
-
-bool Command::operator==(
-    const Command& cmd) const {
-
-    if (t != cmd.t) return false;
-    
-    switch(t) {
-    case Type::BUY:
-        return (wpn == cmd.wpn);
-    case Type::AMMO:
-        return (wpn_t == cmd.wpn_t
-            && count == cmd.count);
-    case Type::EQUIPMENT:
-        return (money == cmd.money
-            && knife == cmd.knife
-            && primary == cmd.primary
-            && secondary == cmd.secondary
-            && primary_ammo == cmd.primary_ammo
-            && secondary_ammo == cmd.secondary_ammo);
-    default:
+    if (type != cmd.type)
         return false;
+
+    switch (type) {
+        case CommandType::BUY:
+            return (weapon_name == cmd.weapon_name);
+        case CommandType::AMMO:
+            return (weapon_type == cmd.weapon_type && count == cmd.count);
+        default:
+            return false;
     }
 }

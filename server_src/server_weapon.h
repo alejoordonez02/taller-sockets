@@ -36,7 +36,7 @@ public:
     /*
      * Load ammo
      * */
-    void load_ammo(int count);
+    void load_ammo(const int& count);
 
     /*
      * Operator==

@@ -31,7 +31,7 @@ std::unique_ptr<Weapon> Weapon::create(const WeaponName& name) {
 /*
  * Load ammo
  * */
-void Weapon::load_ammo(int count) { ammo += count; }
+void Weapon::load_ammo(const int& count) { ammo += count; }
 
 /*
  * Getters

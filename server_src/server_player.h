@@ -14,7 +14,7 @@ private:
     std::unique_ptr<Weapon> primary;
     std::unique_ptr<Weapon> secondary;
 
-    bool buy_ammo(std::unique_ptr<Weapon>& weapon, int& count);
+    bool buy_ammo(std::unique_ptr<Weapon>& weapon, const int& count);
 
 public:
     /*

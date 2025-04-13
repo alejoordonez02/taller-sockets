@@ -1,12 +1,14 @@
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 
 #include "../common_src/common_command.h"
 #include "../common_src/common_output.h"
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_socket.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc != 4)
         return -1;
 
@@ -32,25 +34,26 @@ int main(int argc, char* argv[]) {
     ProtocolType protocol_type = Protocol::recv_protocol_type(skt);
     std::unique_ptr<Protocol> protocol = Protocol::create(protocol_type, std::move(skt));
 
-    /*
-     * Recibir equipmamiento inicial
-     * */
-    Output equipment = protocol->recv_output();
-    std::cout << equipment.get_output();
-
     std::string scmd;
-    while (getline(std::cin, scmd) && scmd != "exit") {
-        /*
-         * Enviar comandos
-         * */
-        Command cmd(scmd);
-        protocol->send(cmd);
+    while (true) {
 
         /*
          * Recibir salidas e imprimirlas
          * */
         Output equipment = protocol->recv_output();
         std::cout << equipment.get_output();
+
+        /*
+         * Leer comandos
+         * */
+        if (!getline(std::cin, scmd) || scmd == "exit")
+            break;
+
+        /*
+         * Enviar comandos
+         * */
+        Command cmd(scmd);
+        protocol->send(cmd);
     }
 
     return 0;

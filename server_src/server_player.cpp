@@ -1,5 +1,9 @@
 #include "server_player.h"
 
+#include <memory>
+#include <string>
+#include <utility>
+
 #include "../common_src/common_weapon_names.h"
 
 /*
@@ -27,7 +31,7 @@ bool Player::buy_primary(std::unique_ptr<Weapon>&& weapon) {
 /*
  * Ammo
  * */
-bool Player::buy_ammo(std::unique_ptr<Weapon>& weapon, int& count) {
+bool Player::buy_ammo(std::unique_ptr<Weapon>& weapon, const int& count) {
     int cost = count * weapon->get_ammo_cost();
     if (money < cost)
         return false;
@@ -36,9 +40,9 @@ bool Player::buy_ammo(std::unique_ptr<Weapon>& weapon, int& count) {
     return true;
 }
 
-bool Player::buy_primary_ammo(int& count) { return buy_ammo(primary, count); }
+bool Player::buy_primary_ammo(const int& count) { return buy_ammo(primary, count); }
 
-bool Player::buy_secondary_ammo(int& count) { return buy_ammo(secondary, count); }
+bool Player::buy_secondary_ammo(const int& count) { return buy_ammo(secondary, count); }
 
 /*
  * Getters

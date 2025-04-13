@@ -1,5 +1,7 @@
 #include <iostream>
+#include <memory>
 #include <string>
+#include <utility>
 
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_socket.h"
@@ -7,7 +9,7 @@
 #include "server_command_processor.h"
 #include "server_player.h"
 
-int main(int argc, char* argv[]) {
+int main(int argc, const char* argv[]) {
     if (argc != 3)
         return -1;
 

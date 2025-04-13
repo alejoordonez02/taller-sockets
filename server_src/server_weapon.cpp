@@ -1,5 +1,6 @@
 #include "server_weapon.h"
 
+#include <memory>
 
 Weapon::Weapon(const WeaponName& name, const int& cost, const int& ammo, const int& ammo_cost):
         name(name), cost(cost), ammo(ammo), ammo_cost(ammo_cost) {}

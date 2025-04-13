@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <memory>
 #include <string>
 
 #include "server_weapon.h"
@@ -19,7 +20,7 @@ public:
     /*
      * Constructor
      * */
-    Player(const std::string& username);
+    explicit Player(const std::string& username);
 
     /*
      * Buy
@@ -29,8 +30,8 @@ public:
     /*
      * Ammo
      * */
-    bool buy_primary_ammo(int& count);
-    bool buy_secondary_ammo(int& count);
+    bool buy_primary_ammo(const int& count);
+    bool buy_secondary_ammo(const int& count);
 
     /*
      * Getters

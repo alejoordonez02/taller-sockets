@@ -6,78 +6,11 @@
 
 #include <arpa/inet.h>
 
+#include "common_binary_serials.h"
 #include "common_command.h"
 #include "common_output.h"
 #include "common_weapon_names.h"
 
-#define SRL_BUY 0x02
-#define SRL_AMMO 0x03
-
-#define SRL_EQUIPMENT 0x07
-
-#define SRL_NONE 0x00
-#define SRL_GLOCK 0x01
-#define SRL_AK47 0x02
-#define SRL_M3 0x03
-#define SRL_AWP 0x04
-
-#define SRL_PRIMARY 0x01
-#define SRL_SECONDARY 0x02
-
-/*
- * Mapeo inverso
- * */
-template <typename K, typename V>
-std::map<V, K> get_inverse_map(const std::map<K, V>& map) {
-    std::map<V, K> inverse_map;
-    for (const auto& [key, value]: map) {
-        inverse_map[value] = key;
-    }
-
-    return inverse_map;
-}
-
-/*
- * Consturctor helpers
- * */
-void BinarySerializer::initialize_cmd_type_maps() {
-    cmd_type_to_srl = {{CommandType::BUY, SRL_BUY}, {CommandType::AMMO, SRL_AMMO}};
-
-    srl_to_cmd_type = get_inverse_map(cmd_type_to_srl);
-}
-
-void BinarySerializer::initialize_output_type_maps() {
-    output_type_to_srl = {{OutputType::EQUIPMENT, SRL_EQUIPMENT}};
-
-    srl_to_output_type = get_inverse_map(output_type_to_srl);
-}
-
-void BinarySerializer::initialize_weapon_name_maps() {
-    weapon_name_to_srl = {{WeaponName::NONE, SRL_NONE},
-                          {WeaponName::GLOCK, SRL_GLOCK},
-                          {WeaponName::AK47, SRL_AK47},
-                          {WeaponName::M3, SRL_M3},
-                          {WeaponName::AWP, SRL_AWP}};
-
-    srl_to_weapon_name = get_inverse_map(weapon_name_to_srl);
-}
-
-void BinarySerializer::initialize_weapon_type_maps() {
-    weapon_type_to_srl = {{WeaponType::PRIMARY, SRL_PRIMARY},
-                          {WeaponType::SECONDARY, SRL_SECONDARY}};
-
-    srl_to_weapon_type = get_inverse_map(weapon_type_to_srl);
-}
-
-/*
- * Constructor
- * */
-BinarySerializer::BinarySerializer() {
-    initialize_cmd_type_maps();
-    initialize_output_type_maps();
-    initialize_weapon_name_maps();
-    initialize_weapon_type_maps();
-}
 
 /*
  * Numbers
@@ -104,7 +37,7 @@ int BinarySerializer::get_deserialized_number(const uint8_t& srlzd_n) const {
  * */
 void BinarySerializer::serialize_weapon_name(std::vector<uint8_t>& srlzd,
                                              const WeaponName& weapon) const {
-    uint8_t srlzd_weapon = weapon_name_to_srl.at(weapon);
+    uint8_t srlzd_weapon = BinaryConstant::WEAPON_NAME_TO_SRL.at(weapon);
     srlzd.push_back(srlzd_weapon);
 }
 
@@ -113,7 +46,7 @@ void BinarySerializer::serialize_weapon_name(std::vector<uint8_t>& srlzd,
  * */
 CommandType BinarySerializer::get_deserialized_command_type(
         const std::vector<uint8_t>& srlzd_cmd) const {
-    return srl_to_cmd_type.at(srlzd_cmd[0]);
+    return BinaryConstant::SRL_TO_CMD_TYPE.at(srlzd_cmd[0]);
 }
 
 void BinarySerializer::serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const {
@@ -124,7 +57,7 @@ void BinarySerializer::serialize_buy(std::vector<uint8_t>& srlzd_cmd, const Comm
 
 void BinarySerializer::serialize_ammo(std::vector<uint8_t>& srlzd_cmd, const Command& cmd) const {
     WeaponType weapon_type = cmd.get_weapon_type();
-    uint8_t srlzd_weapon_type = weapon_type_to_srl.at(weapon_type);
+    uint8_t srlzd_weapon_type = BinaryConstant::WEAPON_TYPE_TO_SRL.at(weapon_type);
 
     int count = cmd.get_count();
 
@@ -137,7 +70,7 @@ std::vector<uint8_t> BinarySerializer::serialize(const Command& cmd) const {
 
     CommandType cmd_type = cmd.get_type();
 
-    uint8_t srlzd_cmd_type = cmd_type_to_srl.at(cmd_type);
+    uint8_t srlzd_cmd_type = BinaryConstant::CMD_TYPE_TO_SRL.at(cmd_type);
     srlzd_cmd.push_back(srlzd_cmd_type);
 
     switch (cmd_type) {
@@ -156,7 +89,7 @@ std::vector<uint8_t> BinarySerializer::serialize(const Command& cmd) const {
 }
 
 Command BinarySerializer::deserialize_buy(const std::vector<uint8_t>& srlzd_cmd) const {
-    WeaponName weapon_name = srl_to_weapon_name.at(srlzd_cmd[1]);
+    WeaponName weapon_name = BinaryConstant::SRL_TO_WEAPON_NAME.at(srlzd_cmd[1]);
 
     Command dsrlzd_cmd(CommandType::BUY, weapon_name);
 
@@ -164,7 +97,7 @@ Command BinarySerializer::deserialize_buy(const std::vector<uint8_t>& srlzd_cmd)
 }
 
 Command BinarySerializer::deserialize_ammo(const std::vector<uint8_t>& srlzd_cmd) const {
-    WeaponType weapon_type = srl_to_weapon_type.at(srlzd_cmd[1]);
+    WeaponType weapon_type = BinaryConstant::SRL_TO_WEAPON_TYPE.at(srlzd_cmd[1]);
     int count = get_deserialized_number(srlzd_cmd[2]);
 
     Command dsrlzd_cmd(CommandType::AMMO, weapon_type, count);
@@ -190,7 +123,7 @@ Command BinarySerializer::deserialize_command(const std::vector<uint8_t>& srlzd_
  * */
 OutputType BinarySerializer::get_deserialized_output_type(
         const std::vector<uint8_t>& srlzd_output) const {
-    return srl_to_output_type.at(srlzd_output[0]);
+    return BinaryConstant::SRL_TO_OUTPUT_TYPE.at(srlzd_output[0]);
 }
 
 void BinarySerializer::serialize_equipment(std::vector<uint8_t>& srlzd_output,
@@ -219,7 +152,7 @@ std::vector<uint8_t> BinarySerializer::serialize(const Output& output) const {
 
     OutputType output_type = output.get_type();
 
-    uint8_t srlzd_output_type = output_type_to_srl.at(output_type);
+    uint8_t srlzd_output_type = BinaryConstant::OUTPUT_TYPE_TO_SRL.at(output_type);
     srlzd_output.push_back(srlzd_output_type);
 
     switch (output_type) {
@@ -240,10 +173,10 @@ Output BinarySerializer::deserialize_equipment(const std::vector<uint8_t>& srlzd
 
     const bool knife = srlzd_output[3];
 
-    const WeaponName primary = srl_to_weapon_name.at(srlzd_output[4]);
+    const WeaponName primary = BinaryConstant::SRL_TO_WEAPON_NAME.at(srlzd_output[4]);
     const int primary_ammo = get_deserialized_number(srlzd_output[5]);
 
-    const WeaponName secondary = srl_to_weapon_name.at(srlzd_output[7]);
+    const WeaponName secondary = BinaryConstant::SRL_TO_WEAPON_NAME.at(srlzd_output[7]);
     const int secondary_ammo = get_deserialized_number(srlzd_output[8]);
 
     Output dsrlzd_output(OutputType::EQUIPMENT, money, knife, primary, primary_ammo, secondary,

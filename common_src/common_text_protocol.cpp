@@ -6,7 +6,7 @@
 
 #include "common_text_serializer.h"
 
-#define MAX_BUF 256
+#define MAX_BUF 128
 #define EQUIPMENT_LINES 4
 
 TextProtocol::TextProtocol(Socket&& skt): skt(std::move(skt)), srl(TextSerializer()) {}

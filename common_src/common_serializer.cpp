@@ -11,13 +11,8 @@
 #include "common_command.h"
 #include "common_output.h"
 #include "common_protocol.h"
+#include "common_serials.h"
 #include "common_text_serializer.h"
-
-#define SRL_USERNAME 0x01
-#define SRL_PROTOCOL_TYPE 0x06
-
-#define SRL_BINARY 0x07
-#define SRL_TEXT 0x08
 
 /*
  * Static methods
@@ -28,7 +23,7 @@
 std::vector<uint8_t> Serializer::serialize_username(const std::string& username) {
     std::vector<uint8_t> srlzd_username;
 
-    srlzd_username.push_back(SRL_USERNAME);
+    srlzd_username.push_back(SerialConstant::SRL_USERNAME);
 
     uint16_t len = static_cast<uint16_t>(username.length());
     len = htons(len);
@@ -59,14 +54,14 @@ std::string Serializer::deserialize_username(const std::vector<uint8_t>& srlzd_u
 std::vector<uint8_t> Serializer::serialize_protocol_type(const ProtocolType& type) {
     std::vector<uint8_t> srlzd_type;
 
-    srlzd_type.push_back(SRL_PROTOCOL_TYPE);
+    srlzd_type.push_back(SerialConstant::SRL_PROTOCOL_TYPE);
 
     switch (type) {
         case ProtocolType::BINARY:
-            srlzd_type.push_back(SRL_BINARY);
+            srlzd_type.push_back(SerialConstant::SRL_BINARY);
             break;
         case ProtocolType::TEXT:
-            srlzd_type.push_back(SRL_TEXT);
+            srlzd_type.push_back(SerialConstant::SRL_TEXT);
             break;
         default:
             break;
@@ -78,9 +73,9 @@ std::vector<uint8_t> Serializer::serialize_protocol_type(const ProtocolType& typ
 
 ProtocolType Serializer::deserialize_protocol_type(const std::vector<uint8_t>& srlzd_type) {
     switch (srlzd_type[1]) {
-        case SRL_BINARY:
+        case SerialConstant::SRL_BINARY:
             return ProtocolType::BINARY;
-        case SRL_TEXT:
+        case SerialConstant::SRL_TEXT:
             return ProtocolType::TEXT;
         default:
             return ProtocolType::NONE;

@@ -61,9 +61,10 @@ void test03_serialize_equipment_returns_expected_srl() {
 void test04_deserialize_equipment_returns_expected_output() {
     TextSerializer serializer;
     std::string srl = "equipment.money:500\nequipment.knife:true\nequipment.primary:none,"
-                               "0\nequipment.secondary:glock,30\n";
+                      "0\nequipment.secondary:glock,30\n";
 
-    Output expected_output(OutputType::EQUIPMENT, 500, true, WeaponName::NONE, 0, WeaponName::GLOCK, 30);
+    Output expected_output(OutputType::EQUIPMENT, 500, true, WeaponName::NONE, 0, WeaponName::GLOCK,
+                           30);
 
     Output output = serializer.deserialize_output(srl);
 

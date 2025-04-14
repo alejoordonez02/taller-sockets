@@ -1,9 +1,9 @@
-# FLAGS
+#FLAGS
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17 -g -D_GNU_SOURCE -D _POSIX_C_SOURCE=200809L
 INCLUDES = -I../common_src
 
-# SOURCE FILES
+#SOURCE FILES
 SRC = ../common_src/common_socket.cpp \
 	../common_src/common_liberror.cpp \
 	../common_src/common_resolver.cpp \
@@ -18,10 +18,10 @@ SRC = ../common_src/common_socket.cpp \
 	../common_src/common_output.cpp \
 	../common_src/common_tokenizer.cpp
 
-# OBJECT FILES
+#OBJECT FILES
 OBJ = $(SRC:.cpp=.o)
 
-# TEST FILES
+#TEST FILES
 TEST_SRC = test_protocol.cpp \
 	test_serializer.cpp \
 	test_binary_serializer.cpp \
@@ -29,10 +29,10 @@ TEST_SRC = test_protocol.cpp \
 	test_output.cpp \
 	test_text_serializer.cpp
 
-# TEST OBJECT FILES
+#TEST OBJECT FILES
 TEST_OBJ = $(TEST_SRC:.cpp=.o)
 
-# TESTS
+#TESTS
 TESTS = test_protocol \
 	test_serializer \
 	test_binary_serializer \
@@ -66,7 +66,7 @@ test_text_serializer: test_text_serializer.o $(OBJ)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
-# RUN
+#RUN
 run_protocol: test_protocol
 	./test_protocol
 
@@ -87,18 +87,12 @@ run_test_serializer: test_text_serializer
 
 run_all: $(TESTS)
 	@echo "Running all tests..."
-	@for test in $(TESTS); do \
-		echo "--- Running $$test ---"; \
-		./$$test; \
-	done
+	@for test in $(TESTS);
+do echo "--- Running $$test ---";
+./ $$test;
+done
 
-# PHONY
-.PHONY: all \
-	clean \
-	run_protocol \
-	run_serializer \
-	run_binary_serializer \
-	run_command \
-	run_output \
-	run_text_serializer \
-	run_all
+#PHONY
+        .PHONY:
+        all clean run_protocol run_serializer run_binary_serializer run_command run_output
+                run_text_serializer run_all

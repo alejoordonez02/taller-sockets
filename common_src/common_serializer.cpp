@@ -58,6 +58,7 @@ std::vector<uint8_t> Serializer::serialize_protocol_type(const ProtocolType& typ
             srlzd_type.push_back(SerialConstant::SRL_TEXT);
             break;
         default:
+            srlzd_type.clear();
             break;
     }
 

@@ -6,6 +6,7 @@
 #include "../common_src/common_protocol.h"
 #include "../common_src/common_socket.h"
 
+#include "server.h"
 #include "server_command_processor.h"
 #include "server_player.h"
 
@@ -32,7 +33,6 @@ int main(int argc, const char* argv[]) {
      * Enviar el tipo de protocolo
      * */
     ProtocolType protocol_type;
-
     if (sprotocol_type == "binary")
         protocol_type = ProtocolType::BINARY;
     else if (sprotocol_type == "text")
@@ -43,37 +43,17 @@ int main(int argc, const char* argv[]) {
     Protocol::send_protocol_type(protocol_type, skt);
 
     /*
-     * Instanciar el protocolo,
-     * delegándole el ownership
-     * del socket
+     * Instanciar el protocolo, delegándole
+     * el ownership del socket
      * */
     std::unique_ptr<Protocol> protocol = Protocol::create(protocol_type, std::move(skt));
 
     /*
-     * Instanciar el jugador y el
-     * procesador de comandos
+     * Instanciar el server, delegarle el
+     * protocolo, y correrlo
      * */
-    Player player(username);
-    CommandProcessor processor(std::move(player));
-
-    /*
-     * Recibir los comandos del
-     * cliente y procesarlos
-     * */
-    Command cmd;
-    do {
-        Output equipment = processor.get_equipment();
-        if (!protocol->send(equipment))
-            break;
-
-        cmd = protocol->recv_command();
-        Output output = processor.process(cmd);
-        if (output.get_type() == OutputType::NONE)
-            break;
-
-        std::cout << output.get_output();
-
-    } while (!(cmd.get_type() == CommandType::NONE));
+    Server server(std::move(protocol), username);
+    server.run();
 
     return 0;
 }

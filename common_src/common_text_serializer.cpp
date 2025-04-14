@@ -7,26 +7,8 @@
 
 #include "common_command.h"
 #include "common_output.h"
+#include "common_text_serials.h"
 #include "common_tokenizer.h"
-
-#define DELIMITERS ".:,\n"
-
-#define SRL_BUY std::string("weapon")
-#define SRL_AMMO std::string("ammo")
-
-#define SRL_EQUIPMENT std::string("equipment")
-
-#define SRL_KNIFE_EQUIPPED "true"
-#define SRL_KNIFE_NOT_EQUIPPED "false"
-
-#define SRL_NONE std::string("none")
-#define SRL_GLOCK std::string("glock")
-#define SRL_AK47 std::string("ak-47")
-#define SRL_M3 std::string("m3")
-#define SRL_AWP std::string("awp")
-
-#define SRL_PRIMARY std::string("primary")
-#define SRL_SECONDARY std::string("secondary")
 
 /*
  * Mapeo inverso
@@ -45,36 +27,38 @@ std::map<V, K> get_inverse_map(const std::map<K, V>& map) {
  * Consturctor helpers
  * */
 void TextSerializer::initialize_cmd_type_maps() {
-    cmd_type_to_srl = {{CommandType::BUY, SRL_BUY}, {CommandType::AMMO, SRL_AMMO}};
+    cmd_type_to_srl = {{CommandType::BUY, TextConstant::SRL_BUY},
+                       {CommandType::AMMO, TextConstant::SRL_AMMO}};
 
     srl_to_cmd_type = get_inverse_map(cmd_type_to_srl);
 }
 
 void TextSerializer::initialize_output_type_maps() {
-    output_type_to_srl = {{OutputType::EQUIPMENT, SRL_EQUIPMENT}};
+    output_type_to_srl = {{OutputType::EQUIPMENT, TextConstant::SRL_EQUIPMENT}};
 
     srl_to_output_type = get_inverse_map(output_type_to_srl);
 }
 
 void TextSerializer::initialize_knife_maps() {
-    knife_to_srl = {{true, SRL_KNIFE_EQUIPPED}, {false, SRL_KNIFE_NOT_EQUIPPED}};
+    knife_to_srl = {{true, TextConstant::SRL_KNIFE_EQUIPPED},
+                    {false, TextConstant::SRL_KNIFE_NOT_EQUIPPED}};
 
     srl_to_knife = get_inverse_map(knife_to_srl);
 }
 
 void TextSerializer::initialize_weapon_name_maps() {
-    weapon_name_to_srl = {{WeaponName::NONE, SRL_NONE},
-                          {WeaponName::GLOCK, SRL_GLOCK},
-                          {WeaponName::AK47, SRL_AK47},
-                          {WeaponName::M3, SRL_M3},
-                          {WeaponName::AWP, SRL_AWP}};
+    weapon_name_to_srl = {{WeaponName::NONE, TextConstant::SRL_NONE},
+                          {WeaponName::GLOCK, TextConstant::SRL_GLOCK},
+                          {WeaponName::AK47, TextConstant::SRL_AK47},
+                          {WeaponName::M3, TextConstant::SRL_M3},
+                          {WeaponName::AWP, TextConstant::SRL_AWP}};
 
     srl_to_weapon_name = get_inverse_map(weapon_name_to_srl);
 }
 
 void TextSerializer::initialize_weapon_type_maps() {
-    weapon_type_to_srl = {{WeaponType::PRIMARY, SRL_PRIMARY},
-                          {WeaponType::SECONDARY, SRL_SECONDARY}};
+    weapon_type_to_srl = {{WeaponType::PRIMARY, TextConstant::SRL_PRIMARY},
+                          {WeaponType::SECONDARY, TextConstant::SRL_SECONDARY}};
 
     srl_to_weapon_type = get_inverse_map(weapon_type_to_srl);
 }
@@ -95,7 +79,7 @@ TextSerializer::TextSerializer() {
  * */
 std::vector<std::string> TextSerializer::split(const std::string& s) const {
     std::vector<std::string> tkns;
-    const std::string delims = DELIMITERS;
+    const std::string delims = TextConstant::DELIMITERS;
     size_t start = 0;
 
     for (size_t i = 0; i < s.size(); ++i) {

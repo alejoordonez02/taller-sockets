@@ -38,11 +38,6 @@ public:
     OutputType get_deserialized_output_type(const std::vector<uint8_t>& srlzd_output) const;
     std::vector<uint8_t> serialize(const Output& output) const;
     Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const;
-
-    /*
-     * Destructor
-     * */
-    ~BinarySerializer() override = default;
 };
 
 #endif

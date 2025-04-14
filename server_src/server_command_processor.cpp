@@ -1,6 +1,5 @@
 #include "server_command_processor.h"
 
-#include <iostream>
 #include <memory>
 #include <utility>
 

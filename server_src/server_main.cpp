@@ -7,8 +7,6 @@
 #include "../common_src/common_socket.h"
 
 #include "server.h"
-#include "server_command_processor.h"
-#include "server_player.h"
 
 int main(int argc, const char* argv[]) {
     if (argc != 3)

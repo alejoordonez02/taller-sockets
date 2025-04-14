@@ -6,23 +6,10 @@
 
 #include <arpa/inet.h>
 
+#include "common_binary_serials.h"
 #include "common_command.h"
 #include "common_output.h"
 #include "common_weapon_names.h"
-
-#define SRL_BUY 0x02
-#define SRL_AMMO 0x03
-
-#define SRL_EQUIPMENT 0x07
-
-#define SRL_NONE 0x00
-#define SRL_GLOCK 0x01
-#define SRL_AK47 0x02
-#define SRL_M3 0x03
-#define SRL_AWP 0x04
-
-#define SRL_PRIMARY 0x01
-#define SRL_SECONDARY 0x02
 
 /*
  * Mapeo inverso
@@ -41,30 +28,31 @@ std::map<V, K> get_inverse_map(const std::map<K, V>& map) {
  * Consturctor helpers
  * */
 void BinarySerializer::initialize_cmd_type_maps() {
-    cmd_type_to_srl = {{CommandType::BUY, SRL_BUY}, {CommandType::AMMO, SRL_AMMO}};
+    cmd_type_to_srl = {{CommandType::BUY, BinaryConstant::SRL_BUY},
+                       {CommandType::AMMO, BinaryConstant::SRL_AMMO}};
 
     srl_to_cmd_type = get_inverse_map(cmd_type_to_srl);
 }
 
 void BinarySerializer::initialize_output_type_maps() {
-    output_type_to_srl = {{OutputType::EQUIPMENT, SRL_EQUIPMENT}};
+    output_type_to_srl = {{OutputType::EQUIPMENT, BinaryConstant::SRL_EQUIPMENT}};
 
     srl_to_output_type = get_inverse_map(output_type_to_srl);
 }
 
 void BinarySerializer::initialize_weapon_name_maps() {
-    weapon_name_to_srl = {{WeaponName::NONE, SRL_NONE},
-                          {WeaponName::GLOCK, SRL_GLOCK},
-                          {WeaponName::AK47, SRL_AK47},
-                          {WeaponName::M3, SRL_M3},
-                          {WeaponName::AWP, SRL_AWP}};
+    weapon_name_to_srl = {{WeaponName::NONE, BinaryConstant::SRL_NONE},
+                          {WeaponName::GLOCK, BinaryConstant::SRL_GLOCK},
+                          {WeaponName::AK47, BinaryConstant::SRL_AK47},
+                          {WeaponName::M3, BinaryConstant::SRL_M3},
+                          {WeaponName::AWP, BinaryConstant::SRL_AWP}};
 
     srl_to_weapon_name = get_inverse_map(weapon_name_to_srl);
 }
 
 void BinarySerializer::initialize_weapon_type_maps() {
-    weapon_type_to_srl = {{WeaponType::PRIMARY, SRL_PRIMARY},
-                          {WeaponType::SECONDARY, SRL_SECONDARY}};
+    weapon_type_to_srl = {{WeaponType::PRIMARY, BinaryConstant::SRL_PRIMARY},
+                          {WeaponType::SECONDARY, BinaryConstant::SRL_SECONDARY}};
 
     srl_to_weapon_type = get_inverse_map(weapon_type_to_srl);
 }

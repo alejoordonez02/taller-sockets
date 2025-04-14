@@ -25,6 +25,9 @@ namespace TextConstant {
  * Delimiters
  * */
 inline const std::string DELIMITERS = ":,\n";
+inline const std::string LINE_DELIMITER = "\n";
+inline const std::string VALUE_DELIMITER = ":";
+inline const std::string AMMO_DELIMITER = ",";
 
 /*
  * Commands

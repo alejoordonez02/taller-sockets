@@ -87,12 +87,18 @@ run_test_serializer: test_text_serializer
 
 run_all: $(TESTS)
 	@echo "Running all tests..."
-	@for test in $(TESTS);
-do echo "--- Running $$test ---";
-./ $$test;
-done
+	@for test in $(TESTS); do \
+		echo "--- Running $$test ---"; \
+		./$$test; \
+	done
 
 #PHONY
-        .PHONY:
-        all clean run_protocol run_serializer run_binary_serializer run_command run_output
-                run_text_serializer run_all
+.PHONY: all \
+	clean \
+	run_protocol \
+	run_serializer \
+	run_binary_serializer \
+	run_command \
+	run_output \
+	run_text_serializer \
+	run_all

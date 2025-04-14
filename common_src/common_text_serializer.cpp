@@ -1,6 +1,7 @@
 #include "common_text_serializer.h"
 
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -14,18 +15,21 @@
  * */
 void TextSerializer::serialize_buy(std::string& srlzd_cmd, const Command& cmd) const {
     std::string srlzd_weapon_name = TextConstant::WEAPON_NAME_TO_SRL.at(cmd.get_weapon_name());
-    srlzd_cmd.append(TextConstant::SRL_BUY);
-    srlzd_cmd.append(":");
-    srlzd_cmd.append(srlzd_weapon_name);
+
+    std::ostringstream oss;
+    oss << TextConstant::SRL_BUY << TextConstant::VALUE_DELIMITER << srlzd_weapon_name;
+
+    srlzd_cmd = oss.str();
 }
 
 void TextSerializer::serialize_ammo(std::string& srlzd_cmd, const Command& cmd) const {
     std::string srlzd_weapon_type = TextConstant::WEAPON_TYPE_TO_SRL.at(cmd.get_weapon_type());
     std::string srlzd_count = std::to_string(cmd.get_count());
 
-    srlzd_cmd.append(srlzd_weapon_type);
-    srlzd_cmd.append(":");
-    srlzd_cmd.append(srlzd_count);
+    std::ostringstream oss;
+    oss << srlzd_weapon_type << TextConstant::VALUE_DELIMITER << srlzd_count;
+
+    srlzd_cmd = oss.str();
 }
 
 std::string TextSerializer::serialize(const Command& cmd) const {
@@ -43,7 +47,7 @@ std::string TextSerializer::serialize(const Command& cmd) const {
             break;
     }
 
-    srlzd_cmd.append("\n");
+    srlzd_cmd.append(TextConstant::LINE_DELIMITER);
 
     return srlzd_cmd;
 }
@@ -87,25 +91,16 @@ void TextSerializer::serialize_equipment(std::string& srlzd_output, const Output
     std::string srlzd_secondary = TextConstant::WEAPON_NAME_TO_SRL.at(output.get_secondary());
     std::string srlzd_secondary_ammo = std::to_string(output.get_secondary_ammo());
 
-    srlzd_output.append(TextConstant::SRL_MONEY);
-    srlzd_output.append(":");
-    srlzd_output.append(srlzd_money);
-    srlzd_output.append("\n");
-    srlzd_output.append(TextConstant::SRL_KNIFE);
-    srlzd_output.append(":");
-    srlzd_output.append(srlzd_knife);
-    srlzd_output.append("\n");
-    srlzd_output.append(TextConstant::SRL_PRIMARY);
-    srlzd_output.append(":");
-    srlzd_output.append(srlzd_primary);
-    srlzd_output.append(",");
-    srlzd_output.append(srlzd_primary_ammo);
-    srlzd_output.append("\n");
-    srlzd_output.append(TextConstant::SRL_SECONDARY);
-    srlzd_output.append(":");
-    srlzd_output.append(srlzd_secondary);
-    srlzd_output.append(",");
-    srlzd_output.append(srlzd_secondary_ammo);
+    std::ostringstream oss;
+    oss << TextConstant::SRL_MONEY << TextConstant::VALUE_DELIMITER << srlzd_money
+        << TextConstant::LINE_DELIMITER << TextConstant::SRL_KNIFE << TextConstant::VALUE_DELIMITER
+        << srlzd_knife << TextConstant::LINE_DELIMITER << TextConstant::SRL_PRIMARY
+        << TextConstant::VALUE_DELIMITER << srlzd_primary << TextConstant::AMMO_DELIMITER
+        << srlzd_primary_ammo << TextConstant::LINE_DELIMITER << TextConstant::SRL_SECONDARY
+        << TextConstant::VALUE_DELIMITER << srlzd_secondary << TextConstant::AMMO_DELIMITER
+        << srlzd_secondary_ammo;
+
+    srlzd_output = oss.str();
 }
 
 std::string TextSerializer::serialize(const Output& output) const {
@@ -120,7 +115,7 @@ std::string TextSerializer::serialize(const Output& output) const {
             break;
     }
 
-    srlzd_output.append("\n");
+    srlzd_output.append(TextConstant::LINE_DELIMITER);
 
     return srlzd_output;
 }
@@ -128,9 +123,12 @@ std::string TextSerializer::serialize(const Output& output) const {
 Output TextSerializer::deserialize_equipment(
         const std::vector<std::string>& slrzd_output_tkns) const {
     int dsrlzd_money = std::stoi(slrzd_output_tkns[1]);
+
     bool dsrlzd_knife = TextConstant::SRL_TO_KNIFE.at(slrzd_output_tkns[3]);
+
     WeaponName dsrlzd_primary = TextConstant::SRL_TO_WEAPON_NAME.at(slrzd_output_tkns[5]);
     int dsrlzd_primary_ammo = std::stoi(slrzd_output_tkns[6]);
+
     WeaponName dsrlzd_secondary = TextConstant::SRL_TO_WEAPON_NAME.at(slrzd_output_tkns[8]);
     int dsrlzd_secondary_ammo = std::stoi(slrzd_output_tkns[9]);
 

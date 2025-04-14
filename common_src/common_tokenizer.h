@@ -7,6 +7,7 @@
 class Tokenizer {
 public:
     static std::vector<std::string> tknz(const std::string& s);
+    static std::vector<std::string> tknz(const std::string& s, const std::string& delims);
 };
 
 #endif

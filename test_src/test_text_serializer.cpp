@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <string>
 
 #include "../common_src/common_command.h"
 #include "../common_src/common_output.h"

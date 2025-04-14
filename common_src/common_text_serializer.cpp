@@ -1,6 +1,5 @@
 #include "common_text_serializer.h"
 
-#include <cstdint>
 #include <map>
 #include <string>
 #include <vector>
@@ -9,33 +8,6 @@
 #include "common_output.h"
 #include "common_text_serials.h"
 #include "common_tokenizer.h"
-
-/*
- * Constructor
- * */
-TextSerializer::TextSerializer() {}
-
-/*
- * Split
- * */
-std::vector<std::string> TextSerializer::split(const std::string& s) const {
-    std::vector<std::string> tkns;
-    const std::string delims = TextConstant::DELIMITERS;
-    size_t start = 0;
-
-    for (size_t i = 0; i < s.size(); ++i) {
-        if (delims.find(s[i]) != std::string::npos) {
-            if (i > start)
-                tkns.push_back(s.substr(start, i - start));
-            start = i + 1;
-        }
-    }
-
-    if (start < s.size())
-        tkns.push_back(s.substr(start));
-
-    return tkns;
-}
 
 /*
  * Commands
@@ -88,7 +60,7 @@ Command TextSerializer::deserialize_ammo(const std::vector<std::string>& srlzd_c
 }
 
 Command TextSerializer::deserialize_command(const std::string& srlzd_cmd) const {
-    std::vector<std::string> tkns = split(srlzd_cmd);
+    std::vector<std::string> tkns = Tokenizer::tknz(srlzd_cmd, TextConstant::DELIMITERS);
     CommandType dsrlzd_command_type = TextConstant::SRL_TO_CMD_TYPE.at(tkns[0]);
 
     switch (dsrlzd_command_type) {
@@ -167,7 +139,7 @@ Output TextSerializer::deserialize_equipment(
 }
 
 Output TextSerializer::deserialize_output(const std::string& srlzd_output) const {
-    std::vector<std::string> tkns = split(srlzd_output);
+    std::vector<std::string> tkns = Tokenizer::tknz(srlzd_output, TextConstant::DELIMITERS);
     OutputType dsrlzd_output_type = TextConstant::SRL_TO_OUTPUT_TYPE.at(tkns[0]);
 
     switch (dsrlzd_output_type) {

@@ -1,18 +1,12 @@
 #include "common_serializer.h"
 
 #include <cstdint>
-#include <memory>
 #include <string>
 #include <vector>
 
 #include <arpa/inet.h>
 
-#include "common_binary_serializer.h"
-#include "common_command.h"
-#include "common_output.h"
-#include "common_protocol.h"
 #include "common_serials.h"
-#include "common_text_serializer.h"
 
 /*
  * Static methods

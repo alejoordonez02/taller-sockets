@@ -13,18 +13,6 @@
 class Serializer {
 public:
     /*
-     * Commands
-     * */
-    // virtual std::vector<uint8_t> serialize(const Command& cmd) const = 0;
-    // virtual Command deserialize_command(const std::vector<uint8_t>& srlzd_cmd) const = 0;
-
-    // /*
-    //  * Outputs
-    //  * */
-    // virtual std::vector<uint8_t> serialize(const Output& output) const = 0;
-    // virtual Output deserialize_output(const std::vector<uint8_t>& srlzd_output) const = 0;
-
-    /*
      * Static methods
      * */
     /*
@@ -40,11 +28,6 @@ public:
     static std::vector<uint8_t> serialize_protocol_type(const ProtocolType& type);
 
     static ProtocolType deserialize_protocol_type(const std::vector<uint8_t>& srlzd_type);
-
-    /*
-     * Destructor
-     * */
-    virtual ~Serializer() = default;
 };
 
 #endif

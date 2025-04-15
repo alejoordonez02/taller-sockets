@@ -11,8 +11,15 @@
 
 Client::Client(std::unique_ptr<Protocol>&& protocol): protocol(std::move(protocol)) {}
 
-void Client::run() {
+Command Client::get_command() {
     std::string scmd;
+    if (!getline(std::cin, scmd))
+        return Command(CommandType::EXIT);
+
+    return Command(scmd);
+}
+
+void Client::run() {
     while (true) {
 
         /*
@@ -24,13 +31,17 @@ void Client::run() {
         /*
          * Leer comandos
          * */
-        if (!getline(std::cin, scmd) || scmd == "exit")
+        Command cmd;
+        while (cmd.get_type() == CommandType::NONE) {
+            cmd = get_command();
+        }
+
+        if (cmd.get_type() == CommandType::EXIT)
             break;
 
         /*
          * Enviar comandos
          * */
-        Command cmd(scmd);
         protocol->send(cmd);
     }
 }

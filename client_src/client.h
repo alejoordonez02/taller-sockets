@@ -8,6 +8,7 @@
 class Client {
 private:
     std::unique_ptr<Protocol> protocol;
+    Command get_command();
 
 public:
     explicit Client(std::unique_ptr<Protocol>&& protocol);

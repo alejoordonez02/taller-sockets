@@ -33,18 +33,30 @@ Command::Command():
         count(0) {}
 
 /*
+ * With type
+ * */
+Command::Command(const CommandType& type):
+        type(type),
+        weapon_name(WeaponName::NONE),
+        weapon_type(WeaponType::NONE),
+        count(0) {}
+
+/*
  * From string
  * */
 CommandType Command::get_type(const std::vector<std::string>& cmd_tkns) {
-    return s_to_cmd_type.at(cmd_tkns[0]);
+    return s_to_cmd_type.find(cmd_tkns[0]) != s_to_cmd_type.end() ? s_to_cmd_type.at(cmd_tkns[0]) :
+                                                                    CommandType::NONE;
 }
 
 WeaponName Command::get_weapon_name(const std::vector<std::string>& cmd_tkns) {
-    return s_to_weapon_name.at(cmd_tkns[1]);
+    return s_to_weapon_name.find(cmd_tkns[1]) != s_to_weapon_name.end() ? s_to_weapon_name.at(cmd_tkns[1]) :
+                                                                    WeaponName::NONE;
 }
 
 WeaponType Command::get_weapon_type(const std::vector<std::string>& cmd_tkns) {
-    return s_to_weapon_type.at(cmd_tkns[1]);
+    return s_to_weapon_type.find(cmd_tkns[1]) != s_to_weapon_type.end() ? s_to_weapon_type.at(cmd_tkns[1]) :
+                                                                    WeaponType::NONE;
 }
 
 int Command::get_count(const std::vector<std::string>& cmd_tkns) { return std::stoi(cmd_tkns[2]); }

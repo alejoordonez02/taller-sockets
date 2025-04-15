@@ -8,7 +8,7 @@
 #include "common_tokenizer.h"
 #include "common_weapon_names.h"
 
-enum class CommandType { NONE, BUY, AMMO };
+enum class CommandType { NONE, EXIT, BUY, AMMO };
 
 class Command {
 private:
@@ -32,6 +32,11 @@ public:
      * From string
      * */
     explicit Command(const std::string& s_cmd);
+
+    /*
+     * With type
+     * */
+    explicit Command(const CommandType& type);
 
     /*
      * BUY

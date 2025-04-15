@@ -7,7 +7,8 @@
 #include "common_tokenizer.h"
 
 const std::map<std::string, CommandType> Command::s_to_cmd_type = {{"buy", CommandType::BUY},
-                                                                   {"ammo", CommandType::AMMO}};
+                                                                   {"ammo", CommandType::AMMO},
+                                                                   {"exit", CommandType::EXIT}};
 
 const std::map<std::string, WeaponName> Command::s_to_weapon_name = {{"glock", WeaponName::GLOCK},
                                                                      {"ak-47", WeaponName::AK47},
@@ -74,8 +75,13 @@ Command::Command(const std::string& s_cmd) {
         case CommandType::AMMO: {
             *this = Command(cmd_type, get_weapon_type(cmd_tkns), get_count(cmd_tkns));
             break;
+        case CommandType::EXIT: {
+            *this = Command(CommandType::EXIT);
+            break;
+        }
         default:
             *this = Command();
+            break;
         }
     }
 }

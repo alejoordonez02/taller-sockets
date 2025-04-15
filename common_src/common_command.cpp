@@ -6,9 +6,8 @@
 
 #include "common_tokenizer.h"
 
-const std::map<std::string, CommandType> Command::s_to_cmd_type = {{"buy", CommandType::BUY},
-                                                                   {"ammo", CommandType::AMMO},
-                                                                   {"exit", CommandType::EXIT}};
+const std::map<std::string, CommandType> Command::s_to_cmd_type = {
+        {"buy", CommandType::BUY}, {"ammo", CommandType::AMMO}, {"exit", CommandType::EXIT}};
 
 const std::map<std::string, WeaponName> Command::s_to_weapon_name = {{"glock", WeaponName::GLOCK},
                                                                      {"ak-47", WeaponName::AK47},
@@ -37,10 +36,7 @@ Command::Command():
  * With type
  * */
 Command::Command(const CommandType& type):
-        type(type),
-        weapon_name(WeaponName::NONE),
-        weapon_type(WeaponType::NONE),
-        count(0) {}
+        type(type), weapon_name(WeaponName::NONE), weapon_type(WeaponType::NONE), count(0) {}
 
 /*
  * From string
@@ -51,13 +47,15 @@ CommandType Command::get_type(const std::vector<std::string>& cmd_tkns) {
 }
 
 WeaponName Command::get_weapon_name(const std::vector<std::string>& cmd_tkns) {
-    return s_to_weapon_name.find(cmd_tkns[1]) != s_to_weapon_name.end() ? s_to_weapon_name.at(cmd_tkns[1]) :
-                                                                    WeaponName::NONE;
+    return s_to_weapon_name.find(cmd_tkns[1]) != s_to_weapon_name.end() ?
+                   s_to_weapon_name.at(cmd_tkns[1]) :
+                   WeaponName::NONE;
 }
 
 WeaponType Command::get_weapon_type(const std::vector<std::string>& cmd_tkns) {
-    return s_to_weapon_type.find(cmd_tkns[1]) != s_to_weapon_type.end() ? s_to_weapon_type.at(cmd_tkns[1]) :
-                                                                    WeaponType::NONE;
+    return s_to_weapon_type.find(cmd_tkns[1]) != s_to_weapon_type.end() ?
+                   s_to_weapon_type.at(cmd_tkns[1]) :
+                   WeaponType::NONE;
 }
 
 int Command::get_count(const std::vector<std::string>& cmd_tkns) { return std::stoi(cmd_tkns[2]); }
@@ -75,13 +73,13 @@ Command::Command(const std::string& s_cmd) {
         case CommandType::AMMO: {
             *this = Command(cmd_type, get_weapon_type(cmd_tkns), get_count(cmd_tkns));
             break;
-        case CommandType::EXIT: {
-            *this = Command(CommandType::EXIT);
-            break;
-        }
-        default:
-            *this = Command();
-            break;
+            case CommandType::EXIT: {
+                *this = Command(CommandType::EXIT);
+                break;
+            }
+            default:
+                *this = Command();
+                break;
         }
     }
 }
